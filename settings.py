@@ -11,7 +11,11 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import json
 
+SETTINGS_DETAILS = None
+with open("environment.settings.json") as f
+    SETTINGS_DETAILS = json.load(f)
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -20,13 +24,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '1tfsjxgld!epjank1)76g-9p3_xh^jp$-#ebh$g%2ro9eqb_n)'
+SECRET_KEY = SETTINGS_DETAILS["SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 # Remove the secret if in PRODUCTION!!!
-SOCIAL_AUTH_GITHUB_KEY = '6f3c31bed92eb68b53a2'
-SOCIAL_AUTH_GITHUB_SECRET = '0c8f2f7d678e9abca87d41f629550dbd90df0baa'
+SOCIAL_AUTH_GITHUB_KEY = SETTINGS_DETAILS["SOCIAL_AUTH_GITHUB_KEY"]
+SOCIAL_AUTH_GITHUB_SECRET = SETTINGS_DETAILS["SOCIAL_AUTH_GITHUB_SECRET"]
 
 ALLOWED_HOSTS = [
                     '127.0.0.1',
@@ -161,8 +165,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'jon.network.bot@gmail.com'
-EMAIL_HOST_PASSWORD = 'levidog#101#jon.network'
+EMAIL_HOST_USER = SETTINGS_DETAILS["EMAIL_HOST_USER"]
+EMAIL_HOST_PASSWORD = SETTINGS_DETAILS["EMAIL_HOST_PASSWORD"]
 
 SITE_ID = 2
 
