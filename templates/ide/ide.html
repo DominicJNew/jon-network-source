@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block head_title %}ComialIDE: A Comic Sans HTML, CSS & JS IDE{% endblock %}
+
+{% block extra_head %}
+    <style>
+        * {
+            font-family: "best font ever"!important;
+        }
+        
+        #result {
+            border: 1px solid black;
+            width: 45%;
+            margin-right: 2.5%;
+            float: right;
+            text-align: left;
+        }
+        
+        @font-face {
+          font-family: 'best font ever';
+          src: url('/fonts/ComicSans.ttf') format('truetype');
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <h1>The #1 IDE in Comic Sans</h1>
+    <h3>By <a href="/user/JonPizza/">JonPizza</a>! Total Page Views: {{ views }}</h3>
+    <textarea style="width: 50%;float: left;" rows="20" id="user-html"><h1>I love comic sans!!!!!!</h1></textarea>
+    
+    <div id="result"></div>
+    
+    <script>
+        const userHtml = document.getElementById("user-html");
+        const result = document.getElementById("result");
+        
+        result.innerHTML = userHtml.value;
+        
+        setInterval(function(){
+            result.innerHTML = userHtml.value;
+        }, 100);
+    </script>
+{% endblock %}

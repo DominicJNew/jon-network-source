@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% load index %}
+
+{% block head_title %}CodeImages{% endblock %}
+
+{% block extra_head %}
+<style>
+    .i {
+        width: 100%;
+        position: relative;
+        transition: 0.3s ease;
+        float: left;
+    } .i:hover {
+        transform: scale(1.05, 1.05);
+    }
+    
+    .con-left {
+        position: relative;
+        text-align: center;
+        width:30%;
+        margin-left:10%;
+        float:left;
+    } .con-right {
+        position: relative;
+        text-align: center;
+        width:30%;
+        margin-right:10%;
+        float:right;
+    }
+    
+    .title {
+        color: black;
+    }
+
+    .b {
+        color: black;
+    }
+</style>
+
+<script>
+    var json, sdata;
+    
+    window.onload = function(){const concon = document.getElementById('concon');};
+    var f;
+
+    
+    function sendVote(data, elemId) {
+        sdata = data.split(" ");
+        json = JSON.stringify({"vote": {
+            "intent": sdata[0],
+            "vote": sdata[1],
+            "pk": sdata[2]
+        }})
+        
+        request = new XMLHttpRequest();
+        request.open("POST", "/images/", true);
+        request.setRequestHeader("Content-Type", "application/json");
+        console.log(elemId)
+        request.onreadystatechange = function () { 
+            if (request.readyState == 4 && request.status == 200) {
+                document.getElementById(elemId).outerHTML = '<b style="color:black;" id="' + elemId + '">' + this.response + '</b>';
+            }
+        }
+        
+        console.log(json);
+        request.send(json);
+    }
+    
+    function numImages() {
+        return document.getElementsByTagName('img').length - 1; // -1 bc RC webring logo
+    }
+    
+    window.onscroll = function() {
+        var scrollHeight, totalHeight;
+        scrollHeight = document.body.scrollHeight;
+        totalHeight = (window.scrollY + window.innerHeight);
+        
+        if (totalHeight >= scrollHeight) {
+            request = new XMLHttpRequest();
+            request.open("GET", "https://jon.network/images/next/" + numImages() + "/", true);
+            request.onload = function() {
+                if (this.response !== 'Invalid Request') {
+                    concon.innerHTML += this.response;
+                    console.log('loaded new images');
+                }
+            };
+            request.send();
+        }
+    }
+</script>
+
+{% endblock %}
+
+{% block content %}
+
+    <h1 style="font-size:3.4rem;">CodeImages</h1>
+    <a href="upload/" style="font-size:2.4rem;">Upload An Image</a>
+    <br />
+    
+    {% if message %}<h3 style="color:red;">{{ message }}</h3>{% endif %}
+    
+    <div style="width:100%;" id="concon">
+        {% for index, img in imgs %}
+            {% if index|divisibleby:2 %}
+                <div class="con-left">
+                    <a href="/images/{{ img.pk }}/{{ img.title|urlify }}/"><img src="{{ img.cover.url }}" alt="{{ img.title }}" class="i"></a>
+                        {% if request.user.username not in img.voted|split and user.is_authenticated %}
+                            <button name="vote" class="text_button" onclick='sendVote("vote up {{ img.pk }}", "v{{ index }}");' id="f{{ index }}1">
+                                Upvote
+                            </button>
+                            | <span id="v{{ index }}">{{ img.votes }}</span> |
+                            <button name="vote" class="text_button" onclick='sendVote("vote down {{ img.pk }}", "v{{ index }}");' id="f{{ index }}2">
+                                Downvote
+                            </button>
+                        {% else %}
+                            <span style="color:black;">Votes: {{ img.votes }}</span>
+                        {% endif %}
+                    <h3>
+                        <a href="/images/{{ img.pk }}/{{ img.title|urlify }}/" class="nice_link">{{ img.title }}</a> 
+                        <span class="b">&bull;</span> 
+                        {% if img.sender != 'Anonymous' %}
+                            <a href="/user/{{ img.sender }}/" class="nice_link">{{ img.sender }}</a>
+                        {% else %}
+                            <span>{{ img.sender }}</span>
+                        {% endif %}
+                    </h3>
+                </div>
+            {% else %}
+                <div class="con-right">
+                    <a href="/images/{{ img.pk }}/{{ img.title|urlify }}/"><img src="{{ img.cover.url }}" alt="{{ img.title }}" class="i"></a>
+                    {% if request.user.username not in img.voted|split and user.is_authenticated %}
+                        <button name="vote" class="text_button" onclick='sendVote("vote up {{ img.pk }}", "v{{ index }}");' id="f{{ index }}1">
+                            Upvote
+                        </button>
+                        | <span id="v{{ index }}">{{ img.votes }}</span> |
+                        <button name="vote" class="text_button" onclick='sendVote("vote down {{ img.pk }}", "v{{ index }}");' id="f{{ index }}2">
+                            Downvote
+                        </button>
+                    {% else %}
+                        <span style="color:black;">Votes: {{ img.votes }}</span>
+                    {% endif %}
+                    <h3>
+                        <a href="/images/{{ img.pk }}/{{ img.title|urlify }}/" class="nice_link">{{ img.title }}</a> 
+                        <span class="b">&bull;</span> 
+                        {% if img.sender != 'Anonymous' %}
+                            <a href="/user/{{ img.sender }}/" class="nice_link">{{ img.sender }}</a>
+                        {% else %}
+                            <span>{{ img.sender }}</span>
+                        {% endif %}
+                    </h3>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+    
+{% endblock %}
+
+
+

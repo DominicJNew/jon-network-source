@@ -1,0 +1,185 @@
+from django.shortcuts import render
+from django.shortcuts import HttpResponse
+from django.core.exceptions import *
+
+def index(request):
+    return render(request, 'chatroom.html')
+
+def send(request):
+    if request.method == 'POST':
+        chat = request.POST.get('textfield', None)
+        try:
+            with open('chats.txt', 'a') as chats:
+                chats.write('{}<hr />'.format(chat))
+            html = '<h1>{}</h1>'.format(chat)
+            return HttpResponse(html)
+        except:
+            return HttpResponse("no such user")  
+    else:
+        return render(request, 'chatroom.html')
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        

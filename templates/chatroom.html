@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+    {% load index %}
+    <head>
+        <title>{{ channel }} - Jon's Network</title>
+        <meta charset="UTF-8">
+        <meta name="keywords" content="{{ channel }}, developer, chatroom, programming languages, python, java, javascript, blockchain">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        {% if channel == 'DevChat' %}
+            <meta name="description" content="DevChat is a chat room for developers to share ideas about code and help each other learn.">
+        {% else %}
+            <meta name="description" content="{{ channel }} is a chat room {% if related %}about {% for r in related %}{{ r }}, {% endfor %}{% endif %}">
+        {% endif %}
+
+
+        
+        {% if not request.user_agent.is_mobile %}
+            <link rel="stylesheet" href="https://jon.network/static/chat.css">
+        {% else %}
+            <link rel="stylesheet" href="https://jon.network/static/mobileChat.css">
+        {% endif %}
+        
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-148915209-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'UA-148915209-1');
+    </script>
+    
+    <style>
+        #get-yo-own {
+            color: red;
+        } #get-yo-own:hover {
+            color: orange;
+        } 
+    </style>
+        
+    </head>
+    <body>
+        <div id="chat_content">
+            {% for chat in chats %}
+                <div>
+                    <b>{{ chat.sender }} <i>{{ chat.time_sent }}</i>:</b> <span>{{ chat.body|formatchat|safe }}</span>
+                    <hr />
+                </div>
+            {% endfor %}
+        </div>
+        
+        {% if not request.user_agent.is_mobile %}
+            <div id="other_chats">
+                {% if related %}
+                    Related Chats:
+                    {% for r in related %}
+                        <br />
+                        <br />
+                        <a href="https://jon.network/chat/{{ r }}">{{ r }}</a>
+                    {% endfor %}
+                {% else %}
+                    No Related Chats
+                    <br />
+                    Try Some of Our Popular Chats:
+                    <br />
+                    <br />
+                    <a href="https://jon.network/chat" class="related">DevChat</a>
+                    <br />
+                    <br />
+                    <a href="https://jon.network/chat/python" class="related">Python</a>
+                    <br />
+                    <br />
+                    <a href="https://jon.network/chat/ravencoin" class="related">Ravencoin</a>
+                    <br />
+                    <br />
+                    <a href="https://jon.network/chat/blockchain" class="related">Blockchain</a>
+                    <br />
+                    <br />
+                    <a href="https://jon.network/chat/computers" class="related">Computers</a>
+                {% endif %}
+            </div>
+        {% endif %}
+        
+        {% if not request.user_agent.is_mobile %}
+            <div id="send_chat">
+                {% if user.is_authenticated %}
+                    <form id="send_form" autocomplete="off">Chat as {{ user.username }}: <input autocomplete="off" type="text" id="body" placeholder="Your Message Here..." style="width:20%;">
+                    <button id="send">Send</button> |
+                    Auto-scroll: <input type="radio" name="skrol" value="o" checked /> On <input type="radio" name="skrol" value="f" /> Off</form>
+                    <a href="https://jon.network" target="_blank" class="nice_link">Jon's Network</a> | <a class="nice_link" id="twatter">Share on Twitter</a> | <a href="https://jon.network/chat/embed/how-to/" id="get-yo-own">Get & Embed Your Own Chat</a>
+                {% else %}
+                    <form id="send_form" autocomplete="off">Chat Anonymously: <input autocomplete="off" type="text" id="body" placeholder="Your Message Here..." style="width:20%;">
+                    <button id="send">Send</button> |
+                    Auto-scroll: <input type="radio" name="skrol" value="o" checked /> On <input type="radio" name="skrol" value="f" /> Off</form>
+                    <a href="https://jon.network" target="_blank" class="nice_link">Jon's Network</a> | <a href="https://jon.network/acct/signup" class="nice_link">Sign Up</a> | <a href="https://jon.network/acct/login" class="nice_link">Login</a> | <a class="nice_link" id="twatter">Share on Twitter</a> | <a href="https://jon.network/chat/embed/how-to/" id="get-yo-own">Get & Embed Your Own Chat</a>
+                {% endif %}
+            </div>
+        {% else %}
+            <div id="send_chat">
+                {% if user.is_authenticated %}
+                    <form id="send_form" autocomplete="off">Chat as {{ user.username }}: <input autocomplete="off" type="text" id="body" placeholder="Your Message Here..." style="width:20%;">
+                    <button id="send">Send</button> |
+                    Auto-scroll: <input type="radio" name="skrol" value="o" checked /> On <input type="radio" name="skrol" value="f" /> Off</form>
+                {% else %}
+                    <form id="send_form" autocomplete="off">Chat Anonymously: <input autocomplete="off" type="text" id="body" placeholder="Your Message Here..." style="width:20%;">
+                    <button id="send">Send</button> |
+                    Auto-scroll: <input type="radio" name="skrol" value="o" checked /> On <input type="radio" name="skrol" value="f" /> Off</form>
+                {% endif %}
+            </div>
+        {% endif %}
+        
+        <script src="https://jon.network/static/chat.js"></script>
+        <script>
+            const twatter = document.getElementById('twatter');
+            const chatname = window.location.pathname;
+            const chat_url = window.location.href;
+            const url = "https://twitter.com/intent/tweet?text=Check out the " + chatname + " chatroom @network_jon&amp;url=" + chat_url;
+            twatter.href = url;
+        </script>
+    </body>
+    <!--
+    
+    
+    Hello Curious Human! You Found An Easter Egg!
+    
+    
+    There is really not much too it...
+    
+    
+    But at least it's lit.
+    
+    -->
+</html>

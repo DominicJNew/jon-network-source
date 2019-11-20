@@ -1,0 +1,53 @@
+{% load index %}
+
+{% for index, img in imgs %}
+    {% if index|divisibleby:2 %}
+        <div class="con-left">
+            <a href="/images/{{ img.pk }}/{{ img.title|urlify }}/"><img src="{{ img.cover.url }}" alt="{{ img.title }}" class="i"></a>
+                {% if request.user.username not in img.voted|split and user.is_authenticated %}
+                    <button name="vote" class="text_button" onclick='sendVote("vote up {{ img.pk }}", "v{{ index }}");' id="f{{ index }}1">
+                        Upvote
+                    </button>
+                    | <span id="v{{ index }}">{{ img.votes }}</span> |
+                    <button name="vote" class="text_button" onclick='sendVote("vote down {{ img.pk }}", "v{{ index }}");' id="f{{ index }}2">
+                        Downvote
+                    </button>
+                {% else %}
+                    <span style="color:black;">Votes: {{ img.votes }}</span>
+                {% endif %}
+            <h3>
+                <a href="/images/{{ img.pk }}/{{ img.title|urlify }}/" class="nice_link">{{ img.title }}</a> 
+                <span class="b">&bull;</span> 
+                {% if img.sender != 'Anonymous' %}
+                    <a href="/user/{{ img.sender }}/" class="nice_link">{{ img.sender }}</a>
+                {% else %}
+                    <span>{{ img.sender }}</span>
+                {% endif %}
+            </h3>
+        </div>
+    {% else %}
+        <div class="con-right">
+            <a href="/images/{{ img.pk }}/{{ img.title|urlify }}/"><img src="{{ img.cover.url }}" alt="{{ img.title }}" class="i"></a>
+                {% if request.user.username not in img.voted|split and user.is_authenticated %}
+                    <button name="vote" class="text_button" onclick='sendVote("vote up {{ img.pk }}", "v{{ index }}");' id="f{{ index }}1">
+                        Upvote
+                    </button>
+                    | <span id="v{{ index }}">{{ img.votes }}</span> |
+                    <button name="vote" class="text_button" onclick='sendVote("vote down {{ img.pk }}", "v{{ index }}");' id="f{{ index }}2">
+                        Downvote
+                    </button>
+                {% else %}
+                    <span style="color:black;">Votes: {{ img.votes }}</span>
+                {% endif %}
+            <h3>
+                <a href="/images/{{ img.pk }}/{{ img.title|urlify }}/" class="nice_link">{{ img.title }}</a> 
+                <span class="b">&bull;</span> 
+                {% if img.sender != 'Anonymous' %}
+                    <a href="/user/{{ img.sender }}/" class="nice_link">{{ img.sender }}</a>
+                {% else %}
+                    <span>{{ img.sender }}</span>
+                {% endif %}
+            </h3>
+        </div>
+    {% endif %}
+{% endfor %}

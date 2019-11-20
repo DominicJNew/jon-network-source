@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+{% block content %}
+  <h2>Sign up to JON.NETWORK</h2>
+  <h3 style="color:red;">You can also login with GitHub <a href="https://jon.network/acct/login">here</a>!</h3>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Sign up</button>
+  </form>
+{% endblock %}

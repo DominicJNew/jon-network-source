@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{% block head_title %}{% endblock %} - Jon's Network</title>
+    {% block extra_head %}
+    {% endblock %}
+    
+    <link rel="stylesheet" type="text/css" href="https://jon.network/index_css.css"> <!--MAIN CSS-->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&amp;display=swap" rel="stylesheet">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://jon.network/sweetalert/dist/sweetalert.min.js"></script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-148915209-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'UA-148915209-1');
+    </script>
+
+  </head>
+  
+  <body>
+        <div id="top" style="margin:0;padding:0;height:10%;">
+                
+        <ul class="uldd" style="height:100%;margin:0;">
+          <li class="lidd" style="height:100%;margin:0 2%;padding:0;display:flex;"><a href="/" class="add not_so_nice" style="margin: auto;font-size:1.7rem;">Jon's Network</a></li>
+          
+          {% if user.is_authenticated %}
+          <li class="dropdown lidd" style="float:right;width:30%;text-align:CENTER;margin:0;height:100%;">
+            <a href="javascript:void(0)" class="dropbtn not_so_nice add" style="width:100%;margin:0;height:100%;display:flex;vertical-align:middle;"><span style="margin: auto;font-size:1.7rem;">Menu</span></a>
+            <div class="dropdown-content">
+              <a href="/project/share/" class="add not_so_nice" style="padding:10% 2%;">Share Project</a>
+              <a href="/chat/" class="add not_so_nice" style="padding:10% 2%;">DevChat</a>
+              <a href="/user/" class="add not_so_nice" style="padding:10% 2%;">Profile</a>
+              <form method="post" action="{% url 'account_logout' %}" class="add" style="padding:10% 2%;">
+                  {% csrf_token %}
+                  {% if redirect_field_value %}
+                  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+                  {% endif %}
+                  <button type="submit" class="text_button" style="vertical-align:middle;text-align:left;font-weight:normal;font-size:1.3rem;width:100%;" title="Sign Out From Jon's Network">Sign Out</button>
+                </form>
+            </div>
+          </li>
+          {% else %}
+          <li class="dropdown lidd" style="float:right;width:30%;text-align:CENTER;margin:0;height:100%;">
+            <a href="javascript:void(0)" class="dropbtn not_so_nice add" style="width:100%;margin:0;height:100%;display:flex;vertical-align:middle;"><span style="margin: auto;font-size:1.7rem;">Menu</span></a>
+            <div class="dropdown-content">
+                <a href="/acct/login/?next=/project/share/" class="add not_so_nice" style="padding:10% 2%;">Post an Article</a>
+                <a href="https://jon.network/chat" class="add not_so_nice" style="padding:10% 2%;">DevChat</a>
+                <a href="https://jon.network/acct/login" class="add not_so_nice" style="padding:10% 2%;">Login</a>
+                <a href="https://jon.network/acct/signup/?next=/user/" class="add not_so_nice" style="padding:10% 2%;">Sign Up</a>
+            </div>
+          </li>
+          {% endif %}
+        </ul>
+        </div>  
+        
+        <div style="font-family:'Montserrat',sans-serif;text-align:CENTER;" id="blockcontent">
+            {% block body %}
+            {% block content %}
+            {% endblock %}
+            {% endblock %}
+        </div>
+        {% block extra_body %}
+        {% endblock %}
+        <div style="width:100%;text-align:CENTER;font-family:'Montserrat', monospace;display:inline-block;">
+            <hr />
+            {% if not request.user_agent.is_mobile %}
+                <h2><a href="https://jon.network" style="color:black;width:100%;">Jon's Network</a></h2>
+            {% else %}
+                <h2 style="font-size:2rem;"><a href="https://jon.network" style="color:black;width:100%;">Jon's Network</a></h2>
+            {% endif %}
+            <div style="width:100%;text-align:CENTER;">
+                <span style="text-align:CENTER;width:100%;">Find and Share Computer Programming Articles &amp; Tutorials &bull; jon@jon.network &bull; <a href="https://twitter.com/network_jon" class="nice_link" style="font-weight:normal;">Twitter</a> &bull; <a href="https://www.youtube.com/channel/UCtJBCn9g-2qmggACsKMJnhA" class="nice_link" style="font-weight: normal;">YouTube</a> &bull; <a href='https://webring.recurse.com' class="nice_link" style="font-weight:normal;">WebRing: <img style="width:25px;" src='https://webring.recurse.com/icon.png'/></a></span>
+            </div>
+        </div>
+        <br />
+        <br />
+    <script>
+            function plzSignIn() {
+                swal ( "Sign In" ,  "You must sign in to create a post" )
+            }
+    </script>
+    <script>
+        links = document.getElementsByTagName('a');
+        for (var i = 0; i < links.length; i++) {
+            if (links[i].className.split(' ')[1] !== "not_so_nice") {
+                links[i].className = "nice_link";
+            }
+        }
+    </script>
+  </body>
+</html>

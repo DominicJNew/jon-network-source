@@ -1,0 +1,7 @@
+{% load index %}
+{% for chat in chats %}
+    <div>
+        <b>{{ chat.sender }} <i>{{ chat.time_sent }}</i>:</b> <span>{{ chat.body|formatchat|safe }}</span>
+        <hr />
+    </div>
+{% endfor %}

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}
+Edit Profile
+{% endblock %}
+
+{% block content %}
+  <h1 style="font-size:3rem;">Editing Profile</h1>
+  <hr />
+  <form method="POST" style="font-size:1.3rem;">
+    {% csrf_token %}
+    <h2>Blank Fields Will Not Show Up on Your User Page</h2>
+    Bio (Max 1500 Chars): 
+    <br />
+    {% if user.bio %}
+    <textarea name="bio" cols="60" rows="10" placeholder="Write a little about yourself! ...">{{ user.bio }}</textarea>
+    {% else %}
+    <textarea name="bio" cols="60" rows="10" placeholder="Write a little about yourself! ..."></textarea>
+    {% endif %}
+    <br>
+    Crypto Donations:
+    <br>
+    <b>Donate <input type="text" value="{{ user.coin_address_type }}" placeholder="Type of Coin (BTC, ETH, RVN...)" name="coin_address_type">: 
+    <input type="text" value="{{ user.coin_address }}" placeholder="Wallet Address" name="coin_address"></b>
+    <br>
+    <br>
+    Other Accounts (Username, Max 100 Chars Each):
+    <br />
+		{% if user.github %}
+    	GitHub Username: <input name ="github" type="text" placeholder="GitHub Username" value="{{ user.github }}">
+    	{% else %}
+    	GitHub Username: <input name ="github" type="text" placeholder="GitHub Username">
+    	{% endif %}
+        <br />
+		{% if user.twitter %}
+    	Twitter Username: <input name ="twitter" type="text" placeholder="Twitter Username" value="{{ user.twitter }}">
+    	{% else %}
+    	Twitter Username: <input name ="twitter" type="text" placeholder="Twitter Username">
+    	{% endif %}
+        <br />
+		{% if user.facebook %}
+    	Facebook Username: <input name ="facebook" type="text" placeholder="Facebook Username" value="{{ user.facebook }}">
+    	{% else %}
+    	Facebook Username: <input name ="facebook" type="text" placeholder="Facebook Username">
+    	{% endif %}
+        <br />
+		{% if user.instagram %}
+    	Instagram Username: <input name ="instagram" type="text" placeholder="Instagram Username" value="{{ user.instagram }}">
+    	{% else %}
+    	Instagram Username: <input name ="instagram" type="text" placeholder="Instagram Username">
+    	{% endif %}
+    	<br />
+        {% if user.personal %}
+        Personal Site: <input name ="personal" type="text" placeholder="Personal URL" value="{{ user.personal }}">
+        {% else %}
+        Personal Site: <input name ="personal" type="text" placeholder="Personal URL">
+        {% endif %}
+    <br />
+    
+    <button type="submit" style="background-color:white;width:7rem; height:2rem;">Update Profile</button>
+  </form>
+{% endblock %}

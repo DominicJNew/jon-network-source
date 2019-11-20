@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ links|length }} {{ catagory|capfirst }} Links - Jon's Network</title>
+        <meta name="description" content="{{ catagory }} links is a service to share links to {{ catagory }} related sites.">
+        
+        <meta name="twitter:card" content="{product">
+        <meta name="twitter:site" content="@network_jon">
+        <meta name="twitter:title" content="Find and share *any* {{ catagory }} links! ~~ Jon's Network">
+        <meta name="twitter:description" content="{{ catagory }} links allows you to share a link to any site you want. popular topics are python, bitcoin, and ravencoin. ~~ Jon's Network">
+        
+        <style>
+            .link {
+                font-size: 1.5rem;
+            }
+        </style>
+    <body>
+        <h1>{{ links|length }} {{ catagory|capfirst }} Links</h1>
+        
+        <form action="/links/{{ catagory }}/" method="post" style="font-size:1.8rem;">
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit" value="Submit">
+        </form>
+        
+        Share on 
+        <a href="https://twitter.com/intent/tweet?text={{ catagory|capfirst }} Links: Share any {{ catagory }}-related links!&amp;url=https://jon.network/links/{{ catagory }}/&amp;hashtags={{ catagory }}" class="nice_link">
+            Twitter
+            <img src="https://1000logos.net/wp-content/uploads/2017/06/Twitter-Logo.png" style="width:2.5%;">
+        </a>
+        <br>
+        <a href="/chat/{{ catagory }}/">{{ catagory }} chat</a>
+        <hr>
+        {% for link in links %}
+            <br>
+            &gt; <img src="http://{{ link.domain }}/favicon.ico" onerror="this.style.display='none'" style="width:20px;"> <a href="{{ link.url }}" rel="nofollow" target="_blank" class="link">{{ link.title }}</a>
+        {% endfor %}
+        <hr>
+        Ran By <a href="/">Jon's Network</a>
+        <br>
+        <a href="/links/">Link Index</a>
+    </body>
+</html>

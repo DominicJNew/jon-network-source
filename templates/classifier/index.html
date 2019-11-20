@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block head_title %}Pickle Brand Classifier{% endblock %}
+{% block content %}
+    <div style="margin-left:27.5%;margin-right:27.5%;">
+        <h1>Pickle Brand Classifier</h1>
+        <b>Ever Worried That You Are Eating The Disgusting Mt. Olive Pickles Rather Than The Epic Vlasic Pickles?</b>
+        <br />
+        <i>We've Got You Covered!</i>
+        
+        <br />
+        <br />
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="myfile">
+            <button type="submit">Upload</button>
+        </form>
+        <br />
+        
+        <div style="text-align:left;">
+            <h3>How Does This Work?</h3>
+            <p>You upload a file, and then our super epic <a href="https://fast.ai">FastAI</a> neural network takes over. 
+            It evaulates your pickle jar and takes it's best guess based on 100s of pickles it has seen beforehand. Then,
+            our AI will tell you it's final guess</p>
+        </div>
+    </div>
+{% endblock %}

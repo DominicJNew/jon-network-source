@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load index %}
+
+{% block head_title %}
+{{ item.title }} | {{ item.language|title }}
+{% endblock %}
+
+{% block extra_head %}
+<style>
+img {
+    width:100%;
+}
+{% if not request.user_agent.is_mobile %}
+    .code {
+        background-color: #E2E2E2; /* For md code blocks */
+        font-size: 0.9rem;
+        overflow-y:auto;
+    }
+    
+    #md-con {
+        margin-left: 27.5%;
+        margin-right: 27.5%;
+        text-align: left;
+    }
+{% else %}
+    .code {
+        background-color: #E2E2E2; /* For md code blocks */
+        font-size: 1.4rem;
+        overflow-y:auto;
+    }
+{% endif %}
+</style>
+
+<style>
+    a {
+         -ms-word-break: break-all;
+            word-break: break-all;
+
+             /* Non standard for WebKit */
+             word-break: break-word;
+
+    }
+</style>
+<meta name="description" content="VOTES: {{ item.votes }} | {{ item.title }} question in {{ item.language }} at Jon's Network">
+
+{% endblock %}
+
+{% block content %}
+    {% if not request.user_agent.is_mobile %}
+        <h1 style="font-size:2.5rem;margin-left:27.5%;margin-right:27.5%;margin-top:0;text-align:left;margin-bottom:0;">{{ item.title }}</h1>
+    {% else %}
+        <h1 style="text-align:left;font-size:2rem;margin-left:6%;margin-right:6%;margin-top:0;margin-bottom:0;">{{ item.title }}</h1>
+    {% endif %}
+    <br />
+
+    {% if user.is_authenticated and user.username not in item.voted and user.username != item.sender %}
+        <div style="width:100%;text-align:CENTER;margin:0;font-size:0.9rem;">
+            <form method="POST" style="text-align:CENTER;display:inline-block;margin:0;">
+                <input type="hidden" name="intent" value="vote">
+                {% csrf_token %}
+                {% if user.username not in item.voted and user.is_authenticated %}
+                <button name="vote" class="text_button" value="u{{ item.pk }}">
+                    Upvote
+                </button>
+                {% endif %}
+            </form>
+            {% if user.username not in item.voted and user.is_authenticated %}
+            |
+            {% endif %}
+            <form method="POST" style="text-align:CENTER;display:inline-block;margin:0;">
+                <input type="hidden" name="intent" value="vote">
+                {% csrf_token %}
+                {% if user.username not in item.voted and user.is_authenticated %}
+                <button name="vote" class="text_button" value="d{{ item.pk }}">
+                    Downvote
+                </button>
+                {% endif %}
+            </form>
+            {% if not user.is_authenticated %}
+            Sign In to Vote
+            {% endif %}
+        </div>
+    {% endif %}
+    {% if not request.user_agent.is_mobile %}
+        <h3 style="text-align:left;margin-left:27.5%;margin-right:27.5%;">Language Used / Topic: {{ item.language }} | Post By: <a href="https://jon.network/user/{{ item.author }}" class="nice_link">{{ item.sender }}</a> | Votes: {{ item.votes }} | Views: {{ item.views }}</h3>
+    {% else %}
+        <h3 style="text-align:left;font-size:1.1rem;margin-left:6%;margin-right:6%;">Language Used / Topic: {{ item.language }} | Post By: <a href="https://jon.network/user/{{ item.author }}" class="nice_link">{{ item.sender }}</a> | Votes: {{ item.votes }} | Views: {{ item.views }}</h3>
+    {% endif %}
+    
+    {% if not request.user_agent.is_mobile %}
+        <div style="padding-left:27.5%;padding-right:27.5%;text-align:LEFT;font-size:1.3rem;line-height: 1.6;">{{ item.body|markdown|safe }}</div>
+    {% else %}
+        <div style="padding-left:6%;padding-right:6%;text-align:LEFT;font-size:1.6rem;line-height: 1.6;">{{ item.body|markdown|safe }}</div>
+    {% endif %}
+    
+    <hr />
+    
+    {% for r in replies %}
+        <br />
+        
+        {% if not request.user_agent.is_mobile %}
+            <div style="padding-left:27.5%;padding-right:27.5%;text-align:LEFT;font-size:1.3rem;line-height: 1.6;">
+                {{ r.body|markdown|safe }}
+                <br />
+                <h4 style="margin:0;"><a href="https://jon.network/user/{{ r.sender }}/" style="text-align:RIGHT;">Reply From {{ r.sender }}</a> <b style="float:right;" id="v{{ r.pk }}">{% if user.username not in r.voted|split %}<span onclick='replyVote({{ r.pk }}, "u");'>Upvote</span> | {{ r.votes }} | <span onclick='replyVote({{ r.pk }}, "d");'>Downvote</span>{% else %} Votes: {{ r.votes }} {% endif %}</b></h4>
+            </div>
+        {% else %}
+            <div style="padding-left:6%;padding-right:6%;text-align:LEFT;font-size:1.6rem;line-height: 1.6;">
+                {{ r.body|markdown|safe }}
+                <br />
+                {% if user.username not in r.voted|split %}
+                    <h4><a href="https://jon.network/user/{{ r.sender }}/" style="text-align:RIGHT;">Reply From {{ r.sender }}</a> <b style="float:right;" id="v{{ r.pk }}"><span onclick='replyVote({{ r.pk }}, "u");'>Upvote</span> | {{ r.votes }} | <span onclick='replyVote({{ r.pk }}, "d");'>Downvote</span></b></h4>
+                {% else %}
+                    <h4><a href="https://jon.network/user/{{ r.sender }}/" style="text-align:RIGHT;">Reply From {{ r.sender }}</a> <b style="float:right;" id="v{{ r.pk }}">Votes: {{ r.votes }}</b></h4>
+                {% endif %}
+            </div>
+        {% endif %}
+        
+        <br />
+        {% if not request.user_agent.is_mobile %}
+            <hr style="width:40%;" />
+        {% else %}
+            <hr style="width:80%;" />
+        {% endif %}
+    {% endfor %}
+    
+    {% if user.is_authenticated %}
+        <div>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="intent" value="reply">
+                <input type="hidden" name="post_id" value="{{ item.pk }}">
+                <textarea placeholder="Your Reply Here... (In Markdown)" minlength=20 name="body" rows="3" id="ta" oninput="dispNumChars();"></textarea>
+                <br>
+                <b id="text-help">Min Length: 20</b>
+                <br>
+                <button type="submit">Send Reply</button>
+            </form>
+        </div>
+    {% else %}
+        <div>
+            <textarea placeholder="Your Reply Here... (In Markdown)" minlength=30 required name="body" rows="3" cols="60" id="ta" oninput="dispNumChars();"></textarea>
+            <br>
+            <b id="text-help">Min Length: 20</b>
+            <br>
+            You Must <a href="https://jon.network/acct/login">Login</a> or <a href="https://jon.network/acct/signup">Signup</a> to Reply
+        </div>
+    {% endif %}
+    <hr>
+    {% if not request.user_agent.is_mobile %}
+        <div id="md-con">
+            <h4>Markdown Cheatsheet</h4>
+            <ul>
+                <li>*italic*</li>
+                <li>**bold**</li>
+                <li>--strikethrough--</li>
+                <li>```code```</li>
+                <li>`inline code`</li>
+                <li>[Link](https://jon.network)</li>
+                <li>![Image](https://jon.network/media/images/giphy.webp/)</li>
+                <li>> Blockquote</li>
+            </ul>
+        </div>
+    {% else %}
+    
+    {% endif %}
+    
+    {% if scroll_to_bottom %}
+        <script>
+            window.scrollTo(0, document.body.scrollHeight-10);
+        </script>
+    {% endif %}
+    
+    <script>
+        const ta = document.getElementById("ta");
+        const textHelp = document.getElementById("text-help");
+        
+        function replyVote(key, vote) {
+            request = new XMLHttpRequest();
+            request.open("POST", "", true);
+            request.setRequestHeader('Content-Type', 'application/json');
+            request.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+            
+            request.onload = function() {
+                document.getElementById("v" + key).innerHTML = "Votes: " + this.response;
+            }
+            
+            request.send(JSON.stringify({
+                "intent": "replyVote",
+                "vote": vote + key,
+            }))
+        }
+        
+        function dispNumChars() {
+            if (ta.value.length === 0) {
+                textHelp.innerHTML = "Min Length: 20"
+            } else if (ta.value.length < 20) {
+                textHelp.innerHTML = (20-ta.value.length) + " to go...";
+            } else {
+                textHelp.innerHTML = "All Set!";
+            }
+        }
+    </script>
+{% endblock %}  
+
+

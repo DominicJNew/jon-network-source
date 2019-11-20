@@ -1,0 +1,469 @@
+{% load index %}
+
+<!DOCTYPE html>
+
+<html style="height:100%;max-width:100%;">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="keywords" content="programming news, developer news, coding tutorials, 2019 programming tutorials, software programming news, programming language, c, python, java, javascript, c++, blockchain, bitcoin">
+        {% if not q %}
+            {% if not selected_lang %}
+                <title>Trending Programming News & Tutorials! - Jon's Network</title>
+                <meta name="description" content="Jon's Network is a hub for relevant programming news and tutorials from 2019. You can share fun stories about computer code, and read other posts to keep up with whats happening in the developer world.">
+            {% else %}
+                <title>Trending {{ selected_lang|upper }} Programming News & Tutorials! - Jon's Network</title>
+                <meta name="description" content="Ideas for {{ selected_lang }} programming projects that will look great on your resume. Jon's Network is a place to find and share programming projects.">
+            {% endif %}
+        {% else %}
+            <title>{{ num_items }} {{ q|title }} Article{% if num_items != 1 %}s{% endif %} - Jon's Network</title>
+            <meta name="description" content="Ideas for {{ selected_lang }} programming projects that will look great on your resume. Jon's Network is a place to find and share programming projects.">
+        {% endif %}
+        <link rel="shortcut icon" href="https://jon.network/favicon.ico" type="image/x-icon"> <!--FAVICON-->
+        <link rel="icon" href="https://jon.network/favicon.ico" type="image/x-icon"> <!--FAVICON-->
+        
+        <link data-async="true" rel="stylesheet" type="text/css" href="https://jon.network/index_css.css"> <!--MAIN CSS-->
+        <link data-async="true" rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Montserrat&amp;display=swap">
+        
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://jon.network/sweetalert/dist/sweetalert.min.js"></script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-148915209-1"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+        
+          gtag('config', 'UA-148915209-1');
+        </script>
+
+        {% if q %}
+            <style>
+                #sq {
+                    background-color: #f1f1f1;
+                    font-family: monospace;
+                    font-weight: normal;
+                }
+            </style>
+        {% endif %}
+        <style>
+            #search {
+                width: 100%;
+                text-align: CENTER;
+            }
+            
+            .project-div {
+                transition: transform .3s;
+            } .project-div:hover {
+                transform: scale(1.05);
+            }
+            
+            .item-img {
+                width: 100%;
+            }
+            
+            .auth-btn {
+                height: 90%;
+                background-color: green;
+                border-radius: 2%;
+                color: white;
+                float: right;
+                margin: 2%;
+                padding:2%;
+                text-decoration: none;
+            } .auth-btn:hover {
+                background-color: red;
+            }
+            
+            #prof-btn {
+                color:white;
+                text-align: right;
+            }
+        </style>
+    </head>
+<body>
+    <div id="top" style="margin:0;padding:0;height:13%;">
+        
+<ul class="uldd" style="height:100%;margin:0;font-size:1.4rem;">
+  <li class="lidd" style="height:100%;margin:0 2%;padding:0;display:flex;"><a href="https://jon.network" class="add" style="margin: auto;font-size:1.7rem;">Jon's Network</a></li>
+  
+  {% if not request.user_agent.is_pc %}<br style="clear:both;">{% endif %}
+  
+  {% if user.is_authenticated %}
+  <!--<div style="float:right;width:50%;text-align:CENTER;margin:0;height:100%;color:white;">-->
+  <!--    <a class="auth-btn" href="/programming/share/">Share</a>-->
+  <!--    <a class="auth-btn" href="/chat/">Chat</a>-->
+  <!--    <a class="auth-btn" href="/forum/">4um</a>-->
+  <!--    <a href="/user/{{ user.username }}/" class="auth-btn"><img src="{{ user.username|gravatar }}" style="height:15%;float:right;"> {{ user.username|rep }}</a>-->
+  <!--</div>-->
+  <li class="dropdown lidd" style="float:right;width:30%;text-align:CENTER;margin:0;height:100%;">
+    <a href="javascript:void(0)" class="dropbtn add" style="width:100%;margin:0;height:100%;display:flex;vertical-align:middle;"><span style="margin: auto;font-size:1.7rem;">Menu</span></a>
+    <div class="dropdown-content">
+      <a href="https://jon.network/project/share" class="add" style="padding:10% 2%;">Share Article</a>
+      <a href="https://jon.network/chat" class="add" style="padding:10% 2%;">DevChat</a>
+      <a href="https://jon.network/user" class="add" style="padding:10% 2%;">Profile - Rep: {{ user.username|rep }}</a>
+      <form method="post" action="{% url 'account_logout' %}" class="add" style="padding:10% 2%;">
+          {% csrf_token %}
+          {% if redirect_field_value %}
+          <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+          {% endif %}
+          <button type="submit" class="text_button" style="vertical-align:middle;text-align:left;font-weight:normal;font-size:1.3rem;width:100%;height:100%;" title="Sign Out From Jon's Network">Sign Out</button>
+        </form>
+    </div>
+  </li>
+  {% else %}
+  <!--<div style="float:right;width:30%;text-align:CENTER;margin:0;height:100%;color:white;">-->
+  <!--    <a class="auth-btn" href="/acct/login/">Login</a>-->
+  <!--    <a class="auth-btn" href="/acct/signup/">Signup</a>-->
+  <!--</div>-->
+  <li class="dropdown lidd" style="float:right;width:30%;text-align:CENTER;margin:0;height:100%;">
+    <a href="javascript:void(0)" class="dropbtn add" style="width:100%;margin:0;height:100%;display:flex;vertical-align:middle;"><span style="margin: auto;font-size:1.7rem;">Menu</span></a>
+    <div class="dropdown-content">
+        <a href="javascript:plzSignIn()" class="add" style="padding:10% 2%;">Share Project</a>
+        <a href="https://jon.network/chat" class="add" style="padding:10% 2%;">DevChat</a>
+        <a href="https://jon.network/acct/login" class="add" style="padding:10% 2%;">Login</a>
+        <a href="https://jon.network/acct/signup/?next=/user/" class="add" style="padding:10% 2%;">Sign Up</a>
+    </div>
+  </li>
+  {% endif %}
+</ul>
+    </div>
+
+    
+    <div id="home" style="height:100%;font-family:'Montserrat', monospace;"> <!--Home-->
+        {% if not request.user_agent.is_mobile %}
+            <h1 style="text-align:CENTER;font-size:3.5rem;">{% if q %} Search Results For <br> <span id="sq">"{{ q|title }}"</span> {% elif selected_lang %} {{ selected_lang|capfirst }} Programming News & Tutorials {% else %} Programming News & Tutorials {% endif %}</h1>
+        {% else %}
+            <h1 style="text-align:CENTER;font-size:2rem;">{% if q %} Search Results For <br> <span id="sq">"{{ q|title }}"</span> {% elif selected_lang %} {{ selected_lang|capfirst }} Programming News & Tutorials {% else %} Programming News & Tutorials {% endif %}</h1>
+        {% endif %}
+        
+        {% for eml in user.emailaddress_set.all %}
+            {% if user.is_authenticated and eml.primary and not eml.verified %}
+                <div style="text-align:CENTER;width:100%;text-size:1.6rem;">You Still Need to <a href="/acct/email/" class="nice_link">Verify (or Change) Your Email</a> ({{ eml.email }})</div>
+                <br>
+            {% endif %}
+        {% endfor %}
+        
+        {% if not q %}
+            <div style="width:100%;text-align:CENTER;background-color:yellow;">
+                <b>Welcome to my Nerdy Corner of The Internet.</b>
+                <h2 style="margin:0;"><a href="/project/share/" class="nice_link">Share</a> | <a href="/project/from-github/" class="nice_link">From GitHub</a> | <a href="/project/from-youtube/" class="nice_link">From YouTube</a></h2>
+                <span style="text-align:CENTER;"><a href="https://jon.network/forum/" class="nice_link">The 4um</a>, <a href="https://jon.network/chat/" class="nice_link">DevChat</a>, <a href="https://jon.network/ide/" class="nice_link">Comic Sans IDE</a></span>
+            </div>
+            <hr />
+            {% endif %}
+            
+        {% if not request.user_agent.is_mobile %}
+            <div style="width:100%;text-align:CENTER;">
+        {% else %}
+            <div style="width:100%;text-align:CENTER;font-size:1.3rem;">
+        {% endif %}
+        Select Language / Topic:
+        <div class="row" style="width:100%;">
+            {% block content3 %}
+            <b style="vertical-align:top;font-weight:normal;">|</b>
+            <b style="vertical-align:top;font-weight:normal;"><a href="https://jon.network" class="nice_link">All</a></b>
+            <b style="vertical-align:top;font-weight:normal;">|</b>
+            {% for lang in popular_langs %}
+                <a class="nice_link" style="text-align:CENTER;" href="https://jon.network/programming-articles/{{ lang }}/">{{ lang }}</a>
+                <b style="vertical-align:top;font-weight:normal;">|</b>
+            {% endfor %}
+        </div>
+    </div>
+    <hr />
+    
+    <div style="width:100%;text-align:CENTER;">
+        <a href="http://twitter.com/network_jon" class="twitter-follow-button nice_link" style="text-align:CENTER;width:100%;">Follow Jon's Network on Twitter</a>
+	</div>
+	<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+    <br />
+        
+        <form id="search">Search {{ items_length }} Projects and {{ total_users }} Users: <input type="text" id="q" name="q"> <button type="submit">Search</button></form>
+
+        {% if num_items != 0 %}
+            {% if q_match_user %}
+                <h3 style="text-align:CENTER;">User: <a href="/user/{{ q_match_user.0.username }}/" class="nice_link" style="background-color:#ffa9f7;">{{ q_match_user.0.username }} ({{ q_match_user.0.rep }})</a></h3>
+            {% endif %}
+                {% for index, item in items %}
+                {% if index|divisibleby:2 %} 
+                    {% if not request.user_agent.is_mobile %}
+                        <div style="box-shadow: 5px 10px #5c00ff;border-style:solid;border-color:gray;border-radius:4%;width:28%;float:left;margin-left:20.5%;margin-right:1%;margin-bottom:2%;height:55%;font-family:'Montserrat', monospace;" class="box project-div">
+                    {% else %}
+                        <div style="border-style:solid;border-color:gray;border-radius:4%;width:90%;float:left;margin-left:5%;margin-bottom:2%;height:55%;font-family:'Montserrat', monospace;" class="box project-div">
+                    {% endif %}
+                {% else %}
+                    {% if not request.user_agent.is_mobile %}
+                        <div style="box-shadow: 2px 12px #ff00c9;border-style:solid;border-color:gray;border-radius:4%;width:28%;float:left;margin-right:15.5%;margin-left:1%;margin-bottom:2%;height:55%;font-family:'Montserrat', monospace;" class="box project-div">
+                    {% else %}
+                        <div style="border-style:solid;border-color:gray;border-radius:4%;width:90%;float:left;margin-left:5%;margin-bottom:2%;height:55%;font-family:'Montserrat', monospace;" class="box project-div">
+                    {% endif %}
+                {% endif %}
+                        <div class="row header">
+                            <div style="width:100%;text-align:CENTER;margin:0;">
+                                <h2 style="text-align:CENTER;display:inline-block;margin:0;white-space: nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;"><a class="nice_link" href="{{ item.url }}" style="text-overflow:ellipsis;overflow:hidden;width:100%;">{{ item.title }}</a></h2>
+                            </div>
+                            <div style="width:100%;text-align:CENTER;">
+                                <h5 style="display:inline-block;margin:0;overflow:hidden;width:25%;text-align:left;"> Votes: {{ item.votes }}</h5>
+                                <h5 style="display:inline-block;margin:0;text-overflow:ellipsis;overflow:hidden;width:73%;text-align:right;float:right;">Posted&nbsp;By:&nbsp;<a class="nice_link" href="https://jon.network/user/{{ item.author }}/" style="">{{ item.author }}</a></h5>
+                            </div>
+                        </div>
+                        {% if not request.user_agent.is_mobile %}
+                            <p style="text-overflow:ellipsis;width:100%;overflow:hidden;margin:0;overflow-y:auto;font-size:1.3rem;" class="row content">
+                                {{ item.short_desc }}
+                                <img src="{{ item.image }}" alt="{{ item.title }}" class="item-img" onerror="this.style.display='none'">
+                                <img src="{{ item.author|gravatar }}&amp;s=400" alt="{{ item.author }} avatar" class="item-img">
+                            </p>                        
+                        {% else %}
+                            <p style="text-overflow:ellipsis;width:100%;overflow:hidden;margin:0;overflow-y:auto;font-size:1.3rem;" class="row content">
+                                {{ item.short_desc }}
+                                <img src="{{ item.image }}" alt="{{ item.title }}" class="item-img" onerror="this.style.display='none'">
+                                <img src="{{ item.author|gravatar }}&amp;s=400" alt="{{ item.author }} avatar" class="item-img">
+                            </p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <br>
+                <hr style="width:40%;">
+                <h1 style="text-align:CENTER;margin:0;color:gray;font-weight:lighter;">No Projects. This is so sad.</h1>
+                <hr style="width:40%;">
+                <br>
+            {% endif %}
+        {% endblock %}
+
+        
+        {% if not selected_lang %}    
+            <h1 style="text-align:CENTER;clear:both;">Python Articles:</h1>
+        {% endif %}
+        {% for index, item in py %}
+                {% if index|divisibleby:2 %} 
+                    {% if not request.user_agent.is_mobile %}
+                        <div style="box-shadow: 5px 10px #5c00ff;border-style:solid;border-color:gray;border-radius:4%;width:28%;float:left;margin-left:20.5%;margin-right:1%;margin-bottom:2%;height:55%;font-family:'Montserrat', monospace;" class="box project-div">
+                    {% else %}
+                        <div style="border-style:solid;border-color:gray;border-radius:4%;width:90%;float:left;margin-left:5%;margin-bottom:2%;height:55%;font-family:'Montserrat', monospace;" class="box project-div">
+                    {% endif %}
+                {% else %}
+                    {% if not request.user_agent.is_mobile %}
+                        <div style="box-shadow: 2px 12px #ff00c9;border-style:solid;border-color:gray;border-radius:4%;width:28%;float:left;margin-right:15.5%;margin-left:1%;margin-bottom:2%;height:55%;font-family:'Montserrat', monospace;" class="box project-div">
+                    {% else %}
+                        <div style="border-style:solid;border-color:gray;border-radius:4%;width:90%;float:left;margin-left:5%;margin-bottom:2%;height:55%;font-family:'Montserrat', monospace;" class="box project-div">
+                    {% endif %}
+                {% endif %}
+                    <div class="row header">
+                        <div style="width:100%;text-align:CENTER;margin:0;">
+                            <h2 style="text-align:CENTER;display:inline-block;margin:0;white-space: nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;"><a class="nice_link" href="{{ item.url }}" style="text-overflow:ellipsis;overflow:hidden;width:100%;">{{ item.title }}</a></h2>
+                        </div>
+                        <div style="width:100%;text-align:CENTER;">
+                            <h5 style="display:inline-block;margin:0;overflow:hidden;width:25%;text-align:left;"> Votes: {{ item.votes }}</h5>
+                            <h5 style="display:inline-block;margin:0;text-overflow:ellipsis;overflow:hidden;width:73%;text-align:right;float:right;">Posted&nbsp;By:&nbsp;<a class="nice_link" href="https://jon.network/user/{{ item.author }}" style="">{{ item.author }}</a></h5>
+                        </div>
+                    </div>
+                    {% if not request.user_agent.is_mobile %}
+                            <p style="text-overflow:ellipsis;width:100%;overflow:hidden;margin:0;overflow-y:auto;font-size:1.3rem;" class="row content">
+                                {{ item.short_desc }}
+                                <img src="{{ item.image }}" alt="{{ item.title }}" class="item-img" onerror="this.style.display='none'">
+                                <img src="{{ item.author|gravatar }}&amp;s=400" alt="{{ item.author }} avatar" class="item-img">
+                            </p>
+                    {% else %}
+                            <p style="text-overflow:ellipsis;width:100%;overflow:hidden;margin:0;overflow-y:auto;font-size:1.3rem;" class="row content">
+                                {{ item.short_desc }}
+                                <img src="{{ item.image }}" alt="{{ item.title }}" class="item-img" onerror="this.style.display='none'">
+                                <img src="{{ item.author|gravatar }}&amp;s=400" alt="{{ item.author }} avatar" class="item-img">
+                            </p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            
+            {% if not selected_lang %}
+            <h1 style="text-align:CENTER;clear:both;">JavaScript Articles:</h1>
+            {% endif %}
+            {% for index, item in js %}
+                {% if index|divisibleby:2 %} 
+                    {% if not request.user_agent.is_mobile %}
+                        <div style="box-shadow: 5px 10px #5c00ff;border-style:solid;border-color:gray;border-radius:4%;width:28%;float:left;margin-left:20.5%;margin-right:1%;margin-bottom:2%;height:55%;font-family:'Montserrat', monospace;" class="box project-div">
+                    {% else %}
+                        <div style="border-style:solid;border-color:gray;border-radius:4%;width:90%;float:left;margin-left:5%;margin-bottom:2%;height:55%;font-family:'Montserrat', monospace;" class="box project-div">
+                    {% endif %}
+                {% else %}
+                    {% if not request.user_agent.is_mobile %}
+                        <div style="box-shadow: 2px 12px #ff00c9;border-style:solid;border-color:gray;border-radius:4%;width:28%;float:left;margin-right:15.5%;margin-left:1%;margin-bottom:2%;height:55%;font-family:'Montserrat', monospace;" class="box project-div">
+                    {% else %}
+                        <div style="border-style:solid;border-color:gray;border-radius:4%;width:90%;float:left;margin-left:5%;margin-bottom:2%;height:55%;font-family:'Montserrat', monospace;" class="box project-div">
+                    {% endif %}
+                {% endif %}
+                    <div class="row header">
+                        <div style="width:100%;text-align:CENTER;margin:0;">
+                            <h2 style="text-align:CENTER;display:inline-block;margin:0;white-space: nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;"><a class="nice_link" href="{{ item.url }}" style="text-overflow:ellipsis;overflow:hidden;width:100%;">{{ item.title }}</a></h2>
+                        </div>
+                        <div style="width:100%;text-align:CENTER;clear:both;">
+                            <h5 style="display:inline-block;margin:0;overflow:hidden;width:25%;text-align:left;"> Votes: {{ item.votes }}</h5>
+                            <h5 style="display:inline-block;margin:0;text-overflow:ellipsis;overflow:hidden;width:73%;text-align:right;float:right;">Posted&nbsp;By:&nbsp;<a class="nice_link" href="https://jon.network/user/{{ item.author }}" style="">{{ item.author }}</a></h5>
+                        </div>
+                    </div>
+                    {% if not request.user_agent.is_mobile %}
+                            <p style="text-overflow:ellipsis;width:100%;overflow:hidden;margin:0;overflow-y:auto;font-size:1.3rem;" class="row content">
+                                {{ item.short_desc }}
+                                <img src="{{ item.image }}" alt="{{ item.title }}" class="item-img" onerror="this.style.display='none'">
+                                <img src="{{ item.author|gravatar }}&amp;s=400" alt="{{ item.author }} avatar" class="item-img">
+                            </p>
+                    {% else %}
+                            <p style="text-overflow:ellipsis;width:100%;overflow:hidden;margin:0;overflow-y:auto;font-size:1.3rem;" class="row content">
+                                {{ item.short_desc }}
+                                <img src="{{ item.image }}" alt="{{ item.title }}" class="item-img" onerror="this.style.display='none'">
+                                <img src="{{ item.author|gravatar }}&amp;s=400" alt="{{ item.author }} avatar" class="item-img">
+                            </p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        
+            {% if not selected_lang %}
+            <h1 style="text-align:CENTER;clear:both;">C++ & Blockchain Articles:</h1>
+            {% endif %}
+            {% for index, item in cpp %}
+                {% if index|divisibleby:2 %} 
+                    {% if not request.user_agent.is_mobile %}
+                        <div style="box-shadow: 5px 10px #5c00ff;border-style:solid;border-color:gray;border-radius:4%;width:28%;float:left;margin-left:20.5%;margin-right:1%;margin-bottom:2%;height:55%;font-family:'Montserrat', monospace;" class="box project-div">
+                    {% else %}
+                        <div style="border-style:solid;border-color:gray;border-radius:4%;width:90%;float:left;margin-left:5%;margin-bottom:2%;height:55%;font-family:'Montserrat', monospace;" class="box project-div">
+                    {% endif %}
+                {% else %}
+                    {% if not request.user_agent.is_mobile %}
+                        <div style="box-shadow: 2px 12px #ff00c9;border-style:solid;border-color:gray;border-radius:4%;width:28%;float:left;margin-right:15.5%;margin-left:1%;margin-bottom:2%;height:55%;font-family:'Montserrat', monospace;" class="box project-div">
+                    {% else %}
+                        <div style="border-style:solid;border-color:gray;border-radius:4%;width:90%;float:left;margin-left:5%;margin-bottom:2%;height:55%;font-family:'Montserrat', monospace;" class="box project-div">
+                    {% endif %}
+                {% endif %}
+                    <div class="row header">
+                        <div style="width:100%;text-align:CENTER;margin:0;">
+                            <h2 style="text-align:CENTER;display:inline-block;margin:0;white-space: nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;"><a class="nice_link" href="{{ item.url }}" style="text-overflow:ellipsis;overflow:hidden;width:100%;">{{ item.title }}</a></h2>
+                        </div>
+                        <div style="width:100%;text-align:CENTER;">
+                            <h5 style="display:inline-block;margin:0;overflow:hidden;width:25%;text-align:left;"> Votes: {{ item.votes }}</h5>
+                            <h5 style="display:inline-block;margin:0;text-overflow:ellipsis;overflow:hidden;width:73%;text-align:right;float:right;">Posted&nbsp;By:&nbsp;<a class="nice_link" href="https://jon.network/user/{{ item.author }}" style="">{{ item.author }}</a></h5>
+                        </div>
+                    </div>
+                    {% if not request.user_agent.is_mobile %}
+                            <p style="text-overflow:ellipsis;width:100%;overflow:hidden;margin:0;overflow-y:auto;font-size:1.3rem;" class="row content">
+                                {{ item.short_desc }}
+                                <img src="{{ item.image }}" alt="{{ item.title }}" class="item-img" onerror="this.style.display='none'">
+                                <img src="{{ item.author|gravatar }}&amp;s=400" alt="{{ item.author }} avatar" class="item-img">
+                            </p>
+                    {% else %}
+                            <p style="text-overflow:ellipsis;width:100%;overflow:hidden;margin:0;overflow-y:auto;font-size:1.3rem;" class="row content">
+                                {{ item.short_desc }}
+                                <img src="{{ item.image }}" alt="{{ item.title }}" class="item-img" onerror="this.style.display='none'">
+                                <img src="{{ item.author|gravatar }}&amp;s=400" alt="{{ item.author }} avatar" class="item-img">
+                            </p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            
+            {% if not request.user_agent.is_mobile %}
+            <h1 style="text-align:CENTER;clear:both;padding-left:27.5%;padding-right:27.5%;">How do you come up with a programming project?</h1>
+            <div style="padding-left:27.5%;padding-right:27.5%;font-size:1.35rem;">
+                <p>
+                    Coming up with programming projects is probaly one of the hardest things to solve as a programmer.
+                    Harder than SyntaxErrors, NameErrors and ValueErrors, finding projects is a very time consuming part
+                    of <b>the actual project!</b> That is why we created Jon's Network, for everyone to share programming
+                    projects, empowering fellow programmers to write more code, and waste less time.
+                </p>
+            </div>
+            
+            <h1 style="text-align:CENTER;clear:both;padding-left:27.5%;padding-right:27.5%;">Ahh! I'm New To Programming. What Language Should I Use?</h1>
+            <div style="padding-left:27.5%;padding-right:27.5%;font-size:1.35rem;">
+                <p>
+                    Fear not my friend! There are several good places to start. I personally love python, and there is an 
+                    <a href="https://www.codecademy.com/learn/paths/data-science" class="nice_link">free, amazing course</a>,
+                    which is a very good place to start. If you really aren't into data science, admittedly it is a lot of math,
+                    there is also a very <a>good web development course</a> that is free as well.
+                </p>
+                <p>
+                    And if courses really aren't your thing, go ahead and find some books! A few that I have heard are really
+                    good are:
+                    <ul>
+                        <li><a href="https://automatetheboringstuff.com/" class="nice_link">Automate the boring stuff with Python</a></li>
+                        <li><a href="http://www.htmlandcssbook.com/" class="nice_link">The HTML & CSS Book</a></li>
+                        <li><a href="https://github.com/rust-lang/book" class="nice_link">The Rust Programming Language (Free E-book)</a></li>
+                    </ul>
+                </p>
+            </div>
+            
+            <h1 style="text-align:CENTER;clear:both;padding-left:6%;padding-right:6%;">What Should You Write About?</h1>
+            <div style="padding-left:27.5%;padding-right:27.5%;font-size:1.35rem;">
+                <p>
+                    You can write about whatever pleases you! Weather it is about a cool Java project you built, an 
+                    interesting bug you squashed, or a quick update about your development life, go ahead and 
+                    <a href="/project/share/" class="nice_link">make a post</a>! And of course if
+                    you really don't know what to write about, ask around in our <a href="/chat/" class="nice_link">sweet chatroom</a>!
+                </p>
+            </div>
+            {% else %} 
+            <h1 style="text-align:CENTER;clear:both;padding-left:6%;padding-right:6%;">How do you come up with a programming project?</h1>
+            <div style="padding-left:6%;padding-right:6%;font-size:1.35rem;">
+                <p>
+                    Coming up with programming projects is probaly one of the hardest things to solve as a programmer.
+                    Harder than SyntaxErrors, NameErrors and ValueErrors, finding projects is a very time consuming part
+                    of <b>the actual project!</b> That is why we created Jon's Network, for everyone to share programming
+                    projects, empowering fellow programmers to write more code, and waste less time.
+                </p>
+            </div>
+            
+            <h1 style="text-align:CENTER;clear:both;padding-left:6%;padding-right:6%;">Ahh! I'm New To Programming. What Language Should I Use?</h1>
+            <div style="padding-left:6%;padding-right:6%;font-size:1.35rem;">
+                <p>
+                    Fear not my friend! There are several good places to start. I personally love python, and there is an 
+                    <a href="https://www.codecademy.com/learn/paths/data-science" class="nice_link">free, amazing course</a>,
+                    which is a very good place to start. If you really aren't into data science, admittedly it is a lot of math,
+                    there is also a very good web development course that is free as well.
+                </p>
+                <p>
+                    And if courses really aren't your thing, go ahead and find some books! A few that I have heard are really
+                    good are:
+                    <ul>
+                        <li><a href="https://automatetheboringstuff.com/" class="nice_link">Automate the boring stuff with Python</a></li>
+                        <li><a href="http://www.htmlandcssbook.com/" class="nice_link">The HTML & CSS Book</a></li>
+                        <li><a href="https://github.com/rust-lang/book" class="nice_link">The Rust Programming Language (Free E-book)</a></li>
+                    </ul>
+                </p>
+            </div>
+            
+            <h1 style="text-align:CENTER;clear:both;padding-left:6%;padding-right:6%;">What Should You Write About?</h1>
+            <div style="padding-left:6%;padding-right:6%;font-size:1.35rem;">
+                <p>
+                    You can write about whatever pleases you! Weather it is about a cool Java project you built, an 
+                    interesting bug you squashed, or a quick update about your development life, go ahead and 
+                    <a href="/project/share/" class="nice_link">make a post</a>! And of course if
+                    you really don't know what to write about, ask around in <a href="/chat/" class="nice_link">DevChat</a>!
+                </p>
+            </div>
+            {% endif %}
+            <div style="float:left;width:100%;text-align:CENTER;font-family:'Montserrat', monospace;clear:both;">
+                <hr />
+                <h2><a href="https://jon.network" style="color:black;width:100%;">Jon's Network</a></h2>
+                <div style="width:100%;text-align:CENTER;">
+                    <span style="text-align:CENTER;width:100%;">Find and Share Programming Projects &bull; jon@jon.network &bull; <a href="https://twitter.com/network_jon" class="nice_link" style="font-weight:normal;">Twitter</a> &bull; <a href="https://www.youtube.com/channel/UCtJBCn9g-2qmggACsKMJnhA" class="nice_link" style="font-weight: normal;">YouTube</a> &bull; <a href='https://webring.recurse.com' class="nice_link" style="font-weight:normal;">WebRing: <img style="width:25px;" src='https://webring.recurse.com/icon.png'/></a></span>
+            </div>
+            <br />
+            
+        </div>
+    </div> <!--End Home-->
+        
+        <script>
+            function plzSignIn() {
+                swal("Sign In", "You must sign in to create a post")
+            }
+
+            var boxes = document.getElementsByClassName('project-div');
+            var colors = ['#17c445', '#17c49c', '#8d17c4', '#db153a', '#fc890f', '#f40ffc'];
+            var r1, r2;
+            for (var i = 0; i < boxes.length; i++) {
+                r1 =  Math.floor((Math.random() * 6) + 4);
+                r2 =  Math.floor((Math.random() * 6) + 4);
+                boxes[i].style.boxShadow = r1 + "px " + r2 + "px " + colors[i % colors.length];
+                console.log(boxes[i]);
+            }
+        </script>
+    </body>
+</html>
+
+

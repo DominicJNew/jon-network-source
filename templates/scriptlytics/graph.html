@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+
+{% block head_title %}Scriptlytics #{{ software.pk }}{% endblock %}
+
+{% block extra_head %}
+<script src="/js/dygraphs.js"></script>
+<meta name="description" content="Scriptlytics is a tool provided by Jon's Network that allows you to view the popularity and usage stats of a given script.">
+<style>
+    .nice_button {
+        background-color: darkgreen;
+        border: none;
+        border-radius: 5%;
+        transition: 0.3s;
+        padding: 1.5%;
+        color: white;
+    } .nice_button:hover {
+        background-color: red;
+        color: black;
+    }
+    
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+    
+    .modal-content {
+      background-color: #fefefe;
+      margin: 10% auto; /* 15% from the top and centered */
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%; /* Could be more or less, depending on screen size */
+    }
+    
+    /* The Close Button */
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+    
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    
+    #beta {
+        color: red;
+    }
+    
+    .code {
+        font-family: monospace;
+        width: 90%;
+        margin: 0 auto;
+        background-color: #cecece;
+        border-radius: 1%;
+        border: 1px solid #606060;
+        text-align: left;
+    }
+    
+    #yo {
+        width: 30%;
+        min-width: 500px;
+        max-width: 95%;
+        margin: 0 auto;
+        text-align: left;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<h1>Scriptlytics <b id="beta">BETA</b> #{{ software.pk }}</h1>
+
+<div id="graph" style="width:85%;margin: 0 auto;"></div>
+
+<br>
+<br>
+<span><b>Total Hits: {{ software.hits|length }}</b> Unique Hits: {{ software.unique_hits|length }} <b>Average # of times ran: {{ software.num_times_ran }}</b></span>
+<br>
+
+<button class="nice_button" id="gh">EMBED</button>
+<button class="nice_button" id="new">GET YOUR OWN</button>
+
+<div id="gh-embed-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3>Markdown (With Image):</h3>
+        <div class="code">
+            [![scriptlytics flag](https://jon.network/scriptlytics/{{ software.pk }}/image/)](https://jon.network/scriptlytics/{{ software.pk }}/)    
+        </div>
+        <h3>Markdown (Just Text):</h3>
+        <div class="code">
+            [Scriptlytics #{{ software.pk }}](https://jon.network/scriptlytics/{{ software.pk }}/)    
+        </div>
+        <h3>HTML (With Image):</h3>
+        <div class="code">
+            &lt;a href="https://jon.network/scriptlytics/{{ software.pk }}"&gt;&lt;img src="https://jon.network/scriptlytics/{{ software.pk }}/image/"&gt;&lt;/a&gt;
+        </div>
+        <h3>HTML (Just Text):</h3>
+        <div class="code">
+            &lt;a href="https://jon.network/scriptlytics/{{ software.pk }}"&gt;Scriptlytics #{{ software.pk }}&lt;/a&gt;
+        </div>
+        
+        <h3>Previews</h3>
+        <a href="https://jon.network/scriptlytics/{{ software.pk }}"><img src="https://jon.network/scriptlytics/{{ software.pk }}/image/"></a>
+        <br>
+        <a href="https://jon.network/scriptlytics/{{ software.pk }}" class="a not_so_nice">Scriptlytics #{{ software.pk }}</a>
+    </div>
+</div>
+
+<div id="new-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Congrats!</h2>
+        You just got <a id="new-sl-link">Scriptlytics #<span id="new-sl-id"></span></a>
+        <br>
+        Python code:
+        <div class="code" id="new-sl-code"></div>
+        <b>Add the code anywhere in your script and your set!</b>
+        <h3>For Different Languages...</h3>
+        <p style="text-align:left;margin:2%;">
+            For different languages, you will have to write your own <i>very simple</i> code. Send a POST request to <code>https://jon.network/scriptlytics/hit/</code> with your scriptlytics id # (and int) and a unique identifier for the computer that the code is running on (a string.) The Python code above uses the system "USER" (or "username" if that doesn't exist) environment variable. 
+        </p>
+        <b>If you do write your own, please <a href="mailto:jon+scriptlytics@jon.network">send me an email</a> to include it here! (You will be credited)</b>
+    </div>
+</div>
+
+<div id="yo">
+    <h2>What is Scriptlytics?</h2>
+    <p>Scriptlytics (Script Analytics) is a fun little tool I made to see how many different people are using your code, and how much they use it. I found myself curious after one of my
+    small projects gained a little attention.</p>
+    <h2>How to Use Scriptlytics?</h2>
+    <p>Using Scriptlytics is simple, all you need to do is click on <b>GET YOUR OWN</b>, follow the instrucions there, then embed it in your GitHub README (or wherever else)!</p>
+</div>
+
+<script>
+let body = document.getElementById('body');
+
+var modal1 = document.getElementById("gh-embed-modal");
+var modal2 = document.getElementById("new-modal");
+var btn1 = document.getElementById("gh");
+var btn2 = document.getElementById("new");
+var span1 = document.getElementsByClassName("close")[0];
+var span2 = document.getElementsByClassName("close")[1];
+var requestDone = false;
+var slId = document.getElementById("new-sl-id");
+var slLink = document.getElementById("new-sl-link");
+var slCode = document.getElementById("new-sl-code");
+
+btn1.onclick = function() {
+  modal1.style.display = "block";
+} 
+btn2.onclick = function() {
+  modal2.style.display = "block";
+  if (!requestDone) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "https://jon.network/scriptlytics/new/", true);
+    xhr.onload = function() {
+        slId.innerHTML = JSON.parse(this.response)['id'];
+        slLink.href = "https://jon.network/scriptlytics/" + JSON.parse(this.response)['id'] + "/";
+        slCode.innerHTML = `
+        # SCRIPTLYTICS code https://jon.network/scriptlytics/` + JSON.parse(this.response)['id'] + `/<br style="margin:0;">
+        exec("import os\\ntry:\\n\\timport requests\\nexcept ModuleNotFoundError:\\n\\tos.system(\'pip3 install requests\')\\nimport requests\\ntry:\\n\\tusername=os.environ[\'USER\']\\nexcept IndexError:\\n\\ttry:\\n\\t\\tusername=os.environ[\'username\']\\n\\texcept IndexError:\\n\\t\\tusername = \'\'\\nrequests.post(\'https://jon.network/scriptlytics/hit/\',{\'id\':` + JSON.parse(this.response)['id'] + `,\'username\':username})")`
+    }
+    xhr.send();
+    requestDone = true;
+  }
+}
+
+span1.onclick = function() {
+  modal1.style.display = "none";
+} 
+span2.onclick = function() {
+  modal2.style.display = "none";
+} 
+
+window.onclick = function(event) {
+  if (event.target == modal1) {
+    modal1.style.display = "none";
+  }
+} 
+window.onclick = function(event) {
+  if (event.target == modal2) {
+    modal2.style.display = "none";
+  }
+}
+
+g = new Dygraph(
+    document.getElementById("graph"),
+    // For possible data formats, see http://dygraphs.com/data.html
+    // The x-values could also be dates, e.g. "2012/03/15"
+`X,Hits,Unique Hits
+{{ software.format_for_graph }}`,
+    {
+      // options go here. See http://dygraphs.com/options.html
+      legend: 'always',
+      animatedZooms: true,
+       axes : {
+            x: {
+            axisLabelFormatter: function(UNIX_timestamp) {
+              var a = new Date(UNIX_timestamp * 1000);
+              var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+              var year = a.getFullYear();
+              var month = months[a.getMonth()];
+              var date = a.getDate();
+              var time = date + ' ' + month + ' ' + year;
+              return time;
+            }
+        }
+       }
+    });
+</script>
+{% endblock %}

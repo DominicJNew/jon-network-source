@@ -1,0 +1,28 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Edit Post" %}{% endblock %}
+
+{% block content %}
+  <b style="font-size:3rem;font-weight:normal;">Edit Post</b>
+  {% if message %}
+    <h3 stlye="color:red;">{{ message }}</h3>
+  {% endif %}
+  Please note, this version of markdown <strong>does not</strong> support tables.
+  <hr />
+  <form method="POST" style="font-size:1.3rem;">
+    {% csrf_token %}
+    Title: <input name="title" type="text" placeholder="Project Title" value="{{ item.title }}">
+    <br />
+    GitHub URL (Only If Available, Include 'https://'): <input name="link" type="text" placeholder="URL to Project" value="{{ item.project_link }}">
+    <br />
+    Language Used / Topic: <input name="language" type="text" placeholder="Programming Language" value="{{ item.language }}">
+    <br />
+    Short Description: <br /><textarea name="short_desc" cols="60" rows="10" placeholder="Tell Us A Little About Your Project">{{ item.short_desc }}</textarea>
+    <br />
+    Long Description (This Field Uses <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet">Markdown</a>): <br /><textarea name="long_desc" cols="60" rows="50" placeholder="Include As Much Detail As You Can. A Good Idea Is To Reference The README File On GitHub, or the Official Website.">{{ item.long_desc }}</textarea>
+    <br />
+    <button type="submit" style="background-color:white;width:7rem; height:2rem;">Post</button>
+  </form>
+{% endblock %}  

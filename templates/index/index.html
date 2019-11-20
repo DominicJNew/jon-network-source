@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Jon's Network: For Programmers</title>
+
+    <meta name="keywords" content="jon's network, jons network, jon network, programming, code, blockchain, news, devchat, programming news, codeimages, comicalide, the programming 4um, developer">
+    <meta name="description" content="Jon's Network is a place for developers to find, share and collaborate accross the world wide web with DevChat, Programming Projects, CodeImages, ComicalIDE and The Programming 4um.">
+    
+    <meta name="twitter:card" content="product">
+    <meta name="twitter:site" content="@network_jon">
+    <meta name="twitter:title" content="Jon's Network: For Blogging Developers">
+    <meta name="twitter:description" content="Jon's Network has tools for programmers who want to blog more. BlopBlog, chatrooms, 4ums, article sharing and more ~~ Jon's Network">
+    
+    <link rel="stylesheet" type="text/css" href="https://jon.network/index_css.css"> <!--MAIN CSS-->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&amp;display=swap" rel="stylesheet">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-148915209-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'UA-148915209-1');
+    </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
+    <script src="/static/sketch.js"></script>
+    
+    
+    <style>
+        canvas {
+            display: block;
+            overflow: hidden;
+        }
+    
+        .su-label {
+            font-size: 0.8rem;
+        }
+        
+        .su-input {
+            width:100%;
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+        }
+        
+        #su-btn {
+            width:100%;
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            background-color: #1a9900;
+            height: 10%;
+            border-width:0;
+            color: white;
+            padding:5%;
+            font-size: 1.5rem;
+            margin-top:2%;
+            border-radius:3px;
+        } #su-btn:hover {
+            background-color: #147900;
+        }
+        
+        #navbar {
+            position: fixed;
+            z-index: 78;
+            top: 0;
+            background-color:#1d1d1d;
+            font-family:'Montserrat',sans-serif;
+            width:100%;
+        }
+        
+        {% if request.user_agent.is_pc %}
+            #su-form {
+                width:35%;
+                float:right;
+                margin-right:7.5%;
+                background-color:white;
+                border-radius:2px;
+                text-align:left;
+                padding:2%;
+                position:relative;
+                top:20%;
+            }
+        {% else %}
+            #su-form {
+                width:90%;
+                margin-left:3%;
+                background-color:white;
+                border-radius:2px;
+                text-align:left;
+                padding:2%;
+                position:relative;
+                top:10%;
+            }
+        {% endif %}
+        
+        #info-con {
+            color: white;
+            position:relative;
+            {% if request.user_agent.is_pc %}top:20%;{% else %}top: 10%;{% endif %}
+            {% if request.user_agent.is_pc %}float: left;{% endif %}
+            margin: 5%;
+            {% if request.user_agent.is_pc %}width:40%;{% else %}width:90%;{% endif %}
+            text-align:left;
+        }
+        
+        #login-link {
+            float: right;
+            background-color: white;
+            color: black;
+            margin-left: 2%;
+            border-radius: 3%;
+            text-decoration: none;
+        } #login-link:hover { 
+            background-color: #1d1d1d;
+            color: white;
+        }
+        
+        #su-link {
+            float: right;
+            border-radius: 3%;
+            color: white;
+            text-decoration: none;
+        } #su-link:hover {
+            color: black;
+            background-color: white;
+        }
+        
+        #content {
+            width: 100%;
+            font-family:'Montserrat',sans-serif;
+        }
+        
+        {% if request.user_agent.is_pc %}
+            .pp {
+                margin: 0;
+                display:table;
+                float: left;
+                width: 35%;
+                text-align: left;
+            } .pp:hover {
+                color: #a2a2a2;
+            }
+        {% else %}
+            .pp {
+                margin: 0;
+                display:table;
+                text-align: CENTER;
+                width: 100%;
+            }
+        {% endif %}
+        
+        {% if request.user_agent.is_pc %}
+            .service-desc {
+                width:53.5%;
+                float:right;
+            }
+        {% endif %}
+        
+        .service-con {
+            background-color: #eeeeee;
+            display:table;
+            border: 2px solid #acacac;
+            border-radius: 5px;
+            margin: 0 auto;
+            padding: 2.5%;
+            {% if request.user_agent.is_pc %}
+                width: 70%;
+            {% else %}
+                width: 90%;
+            {% endif %}
+        }
+        
+        {% if request.user_agent.is_pc %}
+            .service-img {
+                width: 10%;
+                float: left;
+                margin-right: 1.5%;
+            }
+        {% else %}
+            .service-img {
+                width: 15%;
+                margin: 0 auto;
+                display:table;
+            }
+        {% endif %}
+        
+        .light-link {
+            color: #a1ffff;
+        } .light-link:hover {
+            color: #67b0b0;
+        }
+        
+        #foot {
+            width: 100%;
+            background-color: white;
+            font-family: monospace;
+        }
+        
+        .foot-con {
+            width: {% if request.user_agent.is_pc %}25%{% else %}50%{% endif %};
+            float: left;
+            margin: 0;
+        }
+        
+        #about-me {
+            width: 100%;
+            height: 50%;
+        }
+        
+        #jonpizza {
+            float: left;
+            width: 20%;
+            padding: 40%;
+        }
+    </style>
+  </head>
+  
+  <body>
+    <div id="animation" style="position:fixed;top:0;left:0;z-index:-1;display:inline;overflow: hidden!important;width:100%;background-color:#2f2f2f;height: 100%;"></div>
+    
+    <div id="navbar">
+        <h1 style="margin:0;text-align:left;margin:1%;color:white!important;width:30%;float:left;font-size:2em;">Jon's Network</h1>
+        <div style="float:right;margin:1%;width:66%;font-size: 2em;">
+            <a href="/acct/login/" id="login-link">Login</a> <a href="/acct/signup/" id="su-link">Signup</a>
+        </div>
+    </div>
+    
+    <div style="font-family:'Montserrat',sans-serif;text-align:CENTER;width:100%;height:100%;margin:0;">
+        <div id="info-con">
+            <h1 style="font-size:2.9rem;">Jon's Network</h1>
+            <p id="short-desc">Welcome to my Nerdy Corner of the Internet.</p>
+        </div>
+        
+        <div id="su-form">
+            <form class="signup" id="signup_form" method="post" action="/acct/signup/">
+              {% csrf_token %}
+              <b class="su-label">Username:</b>
+              <br style="margin:0;">
+              <input type="text" name="username" id="id_username" class="su-input" autofocus="autofocus" minlength="1" maxlength="150" required>
+              
+              <br style="margin:0;">
+              
+              <b class="su-label">Email:</b>
+              <br style="margin:0;">
+              <input type="email" name="email" id="id_email" class="su-input" required>
+              
+              <br style="margin:0;">
+              
+              <b class="su-label">Password:</b>
+              <br style="margin:0;">
+              <input type="password" name="password1" id="id_password1" class="su-input" required>
+              
+              <br style="margin:0;">
+              
+              <b class="su-label">Password (again):</b>
+              <br style="margin:0;">
+              <input type="password" name="password2" id="id_password2" class="su-input" required>
+              
+              <button type="submit" id="su-btn">
+                  Sign Up for Jon's Network
+              </button>
+            </form>
+        </div>
+    </div>        
+        
+        
+    <div id="content">
+        <br>
+        
+        <div class="service-con">
+            <img src="https://jon.network/static/images/pencil.png" alt="share" class="service-img">
+            <h1 class="pp" onclick="window.location.href='https://jon.network/programming-articles/'">Programming Articles</h1>
+            <p class="service-desc">
+                At Jon's Network, you can <a href="/programming-articles/" class="nice_link">find</a> and <a href="/programming/share/" class="nice_link">share</a> programming articles 
+                &amp; tutorials with your fellow developers to start your own mini-blog.
+                <br>
+                <a href="/programming-articles/" class="nice_link">Find</a> | <a href="/programming/share/" class="nice_link">Share</a> | <a href="/programming/from-github/" class="nice_link">From GitHub</a> | <a href="/programming/from-youtube/" class="nice_link">From YouTube</a>   
+            </p>
+        </div>
+        
+        <br>
+        
+        <div class="service-con">
+            <img src="https://i.imgur.com/A44sK8X.png" alt="share" class="service-img">
+            <h1 class="pp" onclick="window.location.href='https://jon.network/programming-articles/'">BlopBlog: Blog with Ease</h1>
+            <p class="service-desc">
+                <a href="https://jon.network/programming/67/BlopBlog-Blog-With-Ease-for-Programmers/" class="nice_link">BlopBlog</a>
+                (<a href="https://github.com/JonPizza/BlopBlog" class="nice_link">GitHub</a>)
+                is a software tool that lets you blog easier. Simply <b>blop!</b> all your ideas in, then when you are ready to write you will have all the 
+                ideas you need to make your blog posts <i>awesome</i>! 
+            </p>
+        </div>
+        
+        <br>
+        
+        <div class="service-con">
+            <img src="https://jon.network/static/images/chat.png" alt="devchat" class="service-img">
+            <h1 class="pp" onclick="window.location.href='https://jon.network/chat/'">DevChat: Chat for Devs</h1>
+            <p class="service-desc"><a href="/chat/" class="nice_link">DevChat</a> is a free <b>immutable</b> chat room for developers to easily colaborate across the web with <i>zero</i> setup required.</p>
+        </div>
+        
+        <br>
+        
+        <div class="service-con">
+            <img src="https://jon.network/static/images/laptop.png" alt="programming 4um" class="service-img">
+            <h1 class="pp" onclick="window.location.href='https://jon.network/forum/'">The Programming 4um</h1>
+            <p class="service-desc"><a href="/forum/" class="nice_link">The Programming 4um</a> is a forum to answer all your <b>why?</b> code questions, helping you <i>learn better code</i> rather than just getting the answer.</p>
+        </div>
+        
+        <br>
+        
+        <div class="service-con">
+            <img src="https://jon.network/static/images/code.png" alt="code" class="service-img">
+            <h1 class="pp" onclick="window.location.href='https://jon.network/ide/'">Comical IDE</h1>
+            <p class="service-desc"><a href="/ide/" class="nice_link">ComicalIDE</a> is a typical HTML, CSS and JavaScript IDE, except that it is in Comic Sans rather than monospace, making you laugh as you type because you wonder who came up with such a stupid font.</p>
+        </div>
+        
+        <br>
+        <br>
+        <br>
+    </div>
+    
+    <!--<br>-->
+    
+    <!--<div id="about-me">-->
+    <!--    <img src="/static/images/jonpizza.png" alt="jonpizza logo" id="jonpizza">-->
+    <!--</div>-->
+    
+    <br>
+    
+    <div id="foot">
+        <h1 style="padding:0.5%;font-family:'Montserrat',sans-serif;margin:0;{% if request.user_agent.is_pc %}text-align:left;{% endif %}">Jon's Network</h1>
+        <div class="foot-con">
+            <ul>
+                <h3>Features</h3>
+                <li><a href="/chat/" class="nice_link">DevChat</a></li>
+                <li><a href="/project/share/" class="nice_link">Share Project</a></li>
+                <li><a href="/programming-projects/" class="nice_link">Find Projects</a></li>
+                <li><a href="/project/61/Ravencoin-Price-API-Reference/" class="nice_link">Ravencoin API</a></li>
+            </ul>
+        </div>
+        
+        <div class="foot-con">
+            <ul>
+                <h3>Contact</h3>
+                <li><a href="mailto:jon@jon.network" class="nice_link">Email</a></li>
+                <li><a href="/chat/support/" class="nice_link">Support Chat</a></li>
+            </ul>
+        </div>
+        
+        {% if not request.user_agent.is_pc %}
+            <br style="clear: both">
+        {% endif %}
+        
+        <div class="foot-con">
+            <ul>
+                <h3>Social</h3>
+                <li><a href="https://twitter.com/network_jon" class="nice_link">Twitter</a></li>
+                <li><a href="https://www.youtube.com/channel/UCtJBCn9g-2qmggACsKMJnhA" class="nice_link">YouTube</a></li>
+                <li><a href="https://github.com/JonPizza" class="nice_link">GitHub</a></li>
+                <li><a href="/user/JonPizza/" class="nice_link">Jon's Network</a></li>
+            </ul>
+        </div>
+        
+        <div class="foot-con">
+            <ul>
+                <h3>Other</h3>
+                <li><a href="mailto:jon+ifoundabug@jon.network" class="nice_link">Found A Bug?</a></li>
+                <li><a href="mailto:jon+plzaddthisfeatue@jon.network" class="nice_link">Feature Request</a></li>
+                <li><a href="https://teespring.com/shop/jons-network" class="nice_link">Merch</a></li>
+                <li><a href="https://webring.recurse.com" class="nice_link">Webring</a></li>
+            </ul>
+        </div>
+        
+        <br style="clear: both">
+        <br>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block head_title %}Import YouTube Video{% endblock %}
+
+{% block content %}
+    <h1>Import a YouTube Video</h1>
+    <hr>
+    <form method="POST">
+        {% csrf_token %}
+        URL to the Video: <input type="url" name="url" placeholder="https://youtu.be/EPICVIDEO" required>
+        <br>
+        Title: <input type="text" name="title" placeholder="Something EPIC" required maxlength=75>
+        <br>
+        Topic / Language: <input type="text" name="language" placeholder="Python, Crypto, Cookies..." required maxlength=75>
+        <br>
+        Short Description (not required):
+        <br>
+        <textarea row=5 cols=30 placeholder="watch this video for free cookies." name="short_desc"></textarea>
+        <br>
+        <button type="submit">Submit!</button>
+    </form>
+{% endblock %}

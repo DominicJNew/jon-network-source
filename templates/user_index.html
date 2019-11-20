@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block head_title %}The Coder Index{% endblock %}
+
+{% block extra_head %}
+    {% if not request.user_agent.is_mobile %}
+        <style>
+            .n {
+                width: 40%;
+                color: black;
+                text-decoration: none;
+            }
+            .user {
+                width: 40%;
+            }
+        </style>
+    {% else %}
+        <style>
+            .bio {
+                width: 90%;
+            }
+            .n {
+                width: 80%;
+                color: black;
+                text-decoration: none;
+            }
+            .user {
+                width: 100%;
+            }
+        </style>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <h1 style="font-size: 3rem;">All Users</h1>
+    
+    {% if request.user.is_authenticated %}
+        <a href="/user/">Your Profile</a> | <a href="/edit-profile/">Edit Your Profile</a>
+    {% else %}
+        <a href="https://jon.network/acct/signup/?next=/user/" class="nice_link">Sign Up</a> or <a href="https://jon.network/acct/login/?next=/user/" class="nice_link">Log In</a> to Vote, <a href="https://jon.network/project/share/" class="nice_link">Share Projects</a>, <a class="nice_link" href="https://jon.network/chat/">Chat</a>, <a href="https://jon.network/images" class="nice_link">Share Images</a> and Much More!
+    {% endif %}
+    
+    <hr />
+    
+    {% for user in users %}
+        <div style="width:100%;text-align:CENTER;">
+            <br />
+            <a href="/user/{{ user.username }}/" style="text-size:1.7rem;">{{ user.username }}</a> &bull; Reputation: {{ user.rep }}
+            <br />
+        </div>
+    {% endfor %}
+{% endblock %}
+
+
+
+

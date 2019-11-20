@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block head_title %}Import a Project from GitHub{% endblock %}
+
+{% block content %}
+  <b style="font-size:3rem;font-weight:normal;">Import Post</b>
+  <hr />
+  <form method="POST" style="font-size:1.3rem;">
+    {% csrf_token %}
+    GitHub URL: <input name="link" type="text" placeholder="URL to Project">
+    <br />
+    Language Used / Topic: <input name="language" type="text" placeholder="Programming Language">
+    <br />
+    Short Description: <br /><textarea name="short_desc" cols="60" rows="10" placeholder="Tell Us A Little About Your Project"></textarea>
+    <br />
+    <button type="submit" style="background-color:white;width:7rem; height:2rem;">Post</button>
+  </form>
+{% endblock %}

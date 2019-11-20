@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block head_title %}Get & Embed Your Own Chatroom{% endblock %}
+
+{% block extra_head %}
+    <style>
+        .code {
+            background-color:#f3f3f3;
+            font-size: 1.2rem;
+        }
+        
+        #concon {
+            font-size: 1.8rem;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <h1>Get Your Own Chatroom</h1>
+    <h2>It's Free & Easy</h2>
+    <hr>
+    Chatroom Name: <input type="text" id="chat-name">
+    <br>
+    <button id="submit-btn" onclick="createChatroom();">Create Chatroom</button>
+    
+    <div id="concon" style="display: none;">
+        <br>
+        <a href="/chat/" id="chat-link">Your Chatroom</a>
+        <br><br>
+        HTML Embed Code: 
+        <div class="code" id="embed-code"></div>
+        <br>
+        Add To a GitHub ReadMe (Markdown):
+        <div class="code" id="md-code"></div>
+        <hr>
+        Preview:
+        <div id="preview"></div>
+    </div>
+    
+    <script>
+        var chatName = document.getElementById("chat-name");
+        var concon = document.getElementById("concon");
+        var submitBtn = document.getElementById("submit-btn");
+        var chatLink = document.getElementById("chat-link");
+        var embedCode = document.getElementById("embed-code");
+        var mdCode = document.getElementById("md-code");
+        var preview = document.getElementById("preview");
+        var url, val;
+        
+        function createChatroom() {
+            val = chatName.value;
+            val = val.replace(/ /g, "-");
+            url = "https://jon.network/chat/" + val;
+            chatLink.href = url;
+            embedCode.innerHTML = "&lt;a href='" + url + "'&gt;&lt;img src='" + url + "/image/'&gt;&lt;/a&gt;";
+            mdCode.innerHTML = "[![" + chatName.value + " chat](" + url + "/image/)](" + url + ")";
+            preview.innerHTML = "<a href='" + url + "'><img src='" + url + "/image/'></a>";
+            concon.style.display = "block";
+        }
+    </script>
+{% endblock %}
+
+
+

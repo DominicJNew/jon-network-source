@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Link Index - Jon's Network</title>
+        <meta name="description" content="Find and share links. Jon's Network">
+        
+        <meta name="twitter:card" content="product">
+        <meta name="twitter:site" content="@network_jon">
+        <meta name="twitter:title" content="Find and share ∞ links! ~~ Jon's Network">
+        <meta name="twitter:description" content="links allows you to share a link to any site you want. popular topics are python, bitcoin, and ravencoin. ~~ Jon's Network">
+        
+        <style>
+            .link {
+                font-size: 1.7rem;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Link Index. Total Links: {{ num_links }}</h1>
+        <form id="f">
+            I want to share a link about: <input type="text" id="cat"> <button type="submit">Go!</button>
+        </form>
+        {% for catagory in catagories %}
+            <a href="/links/{{ catagory }}/" class="link">{{ catagory }} links</a>
+            <br>
+        {% endfor %}
+        
+        <script>
+            var f = document.getElementById('f');
+            var cat = document.getElementById('cat');
+            
+            function getCat() {
+                var catValue = cat.value;
+                catValue = catValue.replace(/\?/g, '');
+                catValue = catValue.replace(/\#/g, '');
+                catValue = catValue.replace(/\//g, '');
+                return catValue;
+            }
+            
+            f.addEventListener('submit', (event) => {
+                event.preventDefault();
+                window.location.href = "https://jon.network/links/" + getCat() + "/";
+            });
+        </script>
+    </body>
+</html>

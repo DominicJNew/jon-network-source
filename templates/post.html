@@ -1,0 +1,308 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load index %}
+
+{% block head_title %}
+{{ item.title }}
+{% endblock %}
+
+{% block extra_head %}
+<style>
+img {
+    max-width:100%;
+}
+{% if not request.user_agent.is_mobile %}
+    .code {
+        background-color: #E2E2E2;
+        font-size: 0.9rem;
+        overflow-y:auto;
+        font-family: monospace;
+    }
+    
+    #right-arr {
+        position: fixed;
+        top: 40%;
+        right: 2.5%;
+        max-width: 10%;
+        text-align: CENTER;
+    }
+    
+    #left-arr {
+        position: fixed;
+        top: 40%;
+        left: 2.5%;
+        max-width: 10%;
+        text-align: CENTER;
+    }
+{% else %}
+    .code {
+        background-color: #E2E2E2;
+        font-size: 1.4rem;
+        overflow-y:auto;
+        font-family: monospace;
+    }
+{% endif %}
+</style>
+
+<style>
+    a {
+         -ms-word-break: break-all;
+            word-break: break-all;
+
+             /* Non standard for WebKit */
+             word-break: break-word;
+
+    }
+</style>
+<meta name="description" content="VOTES: {{ item.votes }} - {{ item.short_desc }} | Topic: {{ item.language }} @ Jon's Network">
+
+<meta name="twitter:card" content="product">
+<meta name="twitter:site" content="@network_jon">
+<meta name="twitter:title" content="{{ item.title }} ~~ Jon's Network">
+<meta name="twitter:description" content="{{ item.short_desc }}">
+<meta name="twitter:image" content="{{ author.gravatar }}&amp;s=300"> 
+{% if author.twitter %}
+    <meta name="twitter:creator" content="@{{ author.twitter }}"> 
+{% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if request.user_agent.is_pc %} <!--Add the left/right arrow keys-->
+        <div id="right-arr">
+            <img src="/static/images/RIGHT.png" alt="right arrow key">
+            Random Post
+        </div>
+        
+        <div id="left-arr">
+            <img src="/static/images/LEFT.png" alt="left arrow key">
+            Latest Post
+        </div>
+    {% endif %}
+
+
+    {% if not request.user_agent.is_mobile %}
+        <h1 style="font-size:2.5rem;margin:0;margin-left:15%;margin-right:15%;">{{ item.title }}</h1>
+    {% else %}
+        <h1 style="font-size:2rem;margin:0;">{{ item.title }}</h1>
+    {% endif %}
+    {% if user.username == item.author or user.is_superuser %}<a href="{{ item.url }}edit/" class="nice_link">Edit this Post</a>{% endif %}
+    <br />
+    {% if item.project_link %}
+        {% if not request.user_agent.is_mobile %}
+            <a href="{{ item.project_link }}" target="_blank" class="nice_link">GitHub</a>
+        {% else %}
+            <a href="{{ item.project_link }}" target="_blank" class="nice_link" style="font-size:1.1rem;">GitHub</a>
+        {% endif %}
+    {% endif %}
+                {% if not user.is_authenticated or user.username not in item.voted %}
+                        <div style="width:100%;text-align:CENTER;margin:0;font-size:0.9rem;">
+                            <form method="POST" style="text-align:CENTER;display:inline-block;margin:0;">
+                                {% csrf_token %}
+                                <input type="hidden" name="intent" value="vote">
+                                {% if user.username not in item.voted and user.is_authenticated %}
+                                <button name="vote" class="text_button" value="u{{ item.title }}">
+                                    Upvote
+                                </button>
+                                {% endif %}
+                            </form>
+                            {% if user.username not in item.voted and user.is_authenticated %}
+                            |
+                            {% endif %}
+                            <form method="POST" style="text-align:CENTER;display:inline-block;margin:0;">
+                                {% csrf_token %}
+                                <input type="hidden" name="intent" value="vote">
+                                {% if user.username not in item.voted and user.is_authenticated %}
+                                <button name="vote" class="text_button" value="d{{ item.title }}">
+                                    Downvote
+                                </button>
+                                {% endif %}
+                            </form>
+                            {% if not user.is_authenticated %}
+                            
+                            <a href="https://jon.network/acct/login/">Login</a> or <a href="https://jon.network/acct/signup/">Sign Up</a> to Vote
+                            {% endif %}
+                        </div>
+                        {% endif %}
+    {% if not request.user_agent.is_mobile %}
+        <h3>Language Used / Topic: {{ item.language }} | Post By: <a href="https://jon.network/user/{{ item.author }}" class="nice_link">{{ item.author }}</a> | Votes: {{ item.votes }} | Comments: {{ comments|length }} | Views: {{ item.views }}</h3>
+    {% else %}
+        <h3 style="font-size:1.1rem;">Language Used / Topic: {{ item.language }} | Post By: <a href="https://jon.network/user/{{ item.author }}" class="nice_link">{{ item.author }}</a> | Votes: {{ item.votes }} | Comments: {{ comments|length }} | Views: {{ item.views }}</h3>
+    {% endif %}
+    <hr />
+    {% if not request.user_agent.is_mobile %}
+        <p style="padding-left:30%;padding-right:30%;line-height: 1.6;">{{ item.short_desc }}</p>
+    {% else %}
+        <p style="padding-left:6%;padding-right:6%;line-height: 1.6;font-size:1.45rem;">{{ item.short_desc }}</p>
+    {% endif %}
+    <hr />
+    
+    <div style="background-color:#00ff51;">
+        Share on: <a href="https://twitter.com/intent/tweet?text={{ item.title }}&amp;url={{ item.url }}&amp;hashtags=code,programming" class="nice_link">Twitter</a> | <a href="https://www.facebook.com/sharer/sharer.php?u={{ item.url }}">Facebook</a> | <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url={{ item.url }}">LinkedIn</a> | <a href="https://www.reddit.com/submit?url={{ item.url }}">Reddit</a>
+    </div>
+    
+    
+    {% if not request.user_agent.is_mobile %}
+        <div style="padding-left:27.5%;padding-right:27.5%;text-align:LEFT;font-size:1.3rem;line-height: 1.6;">{{ item.long_desc|markdown|safe }}</div>
+        <hr />
+        
+        <div style="margin-left:27.5%;margin-right:27.5%;font-size:1.3rem;border:2px solid gray;border-radius:1%;background-color:#f7f7f7;">
+            <h3>By <a href="/user/{{ author.username }}/">{{ author.username }}</a> - Rep: {{ author.rep }}</h3>
+            <img src="{{ author.gravatar }}" alt="{{ author.username }} avatar">
+            <p style="text-align:LEFT;">{{ author.bio }}</p>
+            {% if author.coin_address %}
+                <br>
+                <b>Donate {{ author.coin_address_type }}: {{ author.coin_address }}</b>
+            {% endif %}
+        </div>
+        <br>
+        <div style="margin-left:27.5%;margin-right:27.5%;font-size:1.3rem;border:2px solid gray;border-radius:1%;background-color:#f7f7f7;">
+            <h1>Contribute to Jon's Network</h1>
+            <hr>
+            <a href="/programming/share/">Share news and tutorials with your fellow developers!</a>
+            <br>
+        </div>
+        
+        <br>
+        <br>
+        
+        {% if comments %}
+            <h1>Comments ({{ comments|length }}):</h1>
+        {% else %}
+            <h3>No Comments Yet... Be The First!!</h3>
+        {% endif %}
+        
+        {% for comment in comments %}
+            <div style="text-align:LEFT;margin-left:27.5%;margin-right:27.5%;">
+                {{ comment.body|markdown|safe }}
+                <br>
+                <a href="/user/{{ comment.author }}/">{{ comment.author }}</a>
+            </div>
+            <hr style="width:50%;">
+        {% endfor %}
+        
+        {% if user.is_authenticated %}
+            <div>
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="intent" value="comment">
+                    <input type="hidden" name="post_id" value="{{ item.pk }}">
+                    <textarea placeholder="Your Reply Here... (In Markdown)" name="body" rows="5" cols="60" required minlength=4></textarea>
+                    <br />
+                    <button type="submit">Send Reply</button>
+                </form>
+            </div>
+        {% else %}
+            <div>
+                <textarea placeholder="Your Reply Here... (In Markdown)" name="body" rows="5" cols="60"></textarea>
+                <br />
+                You Must <a href="https://jon.network/acct/login">Login</a> or <a href="https://jon.network/acct/signup">Signup</a> to Reply
+            </div>
+        {% endif %}
+        
+        <br>
+        
+        <div>
+            Share on: <a href="https://twitter.com/intent/tweet?text={{ item.title }}&amp;url={{ item.url }}&amp;hashtags=code,programming" class="nice_link">Twitter</a> | <a href="https://www.facebook.com/sharer/sharer.php?u={{ item.url }}">Facebook</a> | <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url={{ item.url }}">LinkedIn</a> | <a href="https://www.reddit.com/submit?url={{ item.url }}">Reddit</a>
+        </div>
+        
+        <div style="text-align:left;padding-left:27.5%;padding-right:27.5%;">
+            <h3>Recent Posts:</h3>
+            {% for other_post in items %}
+                <a class="nice_link" href="{{ other_post.url }}">{{ other_post.title }}</a><br /><br />
+            {% endfor %}
+        </div>
+        
+    {% else %} <!-- ******************************************** DESKTOP (UP) | MOBILE (DOWN) ******************************************************* -->
+    
+        <div style="padding-left:6%;padding-right:6%;text-align:LEFT;font-size:1.3rem;line-height: 1.6;">{{ item.long_desc|markdown|safe }}</div>
+        <hr />
+        
+        <div style="margin-left:6%;margin-right:6%;font-size:1.3rem;border:2px solid gray;border-radius:1%;background-color:#f7f7f7;">
+            <h3>By <a href="/user/{{ author.username }}/">{{ author.username }}</a> - Rep: {{ author.rep }}</h3>
+            <img src="{{ author.gravatar }}" alt="{{ author.username }} avatar">
+            <p style="text-align:LEFT;">{{ author.bio }}</p>
+            {% if author.coin_address %}
+                <br>
+                <b style="font-size: 0.7rem;">Donate {{ author.coin_address_type }}: {{ author.coin_address }}</b>
+            {% endif %}
+        </div>
+        <br>        
+        <div style="margin-left:6%;margin-right:6%;font-size:1.3rem;border:2px solid gray;border-radius:1%;background-color:#f7f7f7;">
+            <h1>Contribute to Jon's Network</h1>
+            <hr>
+            <a href="/programming/share/">Share news and tutorials with your fellow developers!</a>
+        </div>
+        
+        <br>
+        
+        {% if comments %}
+            <h1>Comments ({{ comments|length }}):</h1>
+        {% else %}
+            <h3>No Comments Yet... Be The First!!</h3>
+        {% endif %}
+        
+        {% for comment in comments %}
+            <div style="text-align:LEFT;margin-left:6%;margin-right:6%;">
+                {{ comment.body|markdown|safe }}
+                <br>
+                <a href="/user/{{ comment.author }}/">{{ comment.author }}</a>
+            </div>
+            <hr style="width:90%;">
+        {% endfor %}
+        
+        {% if user.is_authenticated %}
+            <div>
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="intent" value="comment">
+                    <input type="hidden" name="post_id" value="{{ item.pk }}">
+                    <textarea placeholder="Your Reply Here... (In Markdown)" name="body" rows="5" cols="30" required minlength=4></textarea>
+                    <br />
+                    <button type="submit">Submit Comment</button>
+                </form>
+            </div>
+        {% else %}
+            <div>
+                <textarea placeholder="Your Reply Here... (In Markdown)" name="body" rows="5" cols="30"></textarea>
+                <br />
+                You Must <a href="https://jon.network/acct/login">Login</a> or <a href="https://jon.network/acct/signup">Signup</a> to Reply
+            </div>
+        {% endif %}
+        
+        <br>
+        
+        <div>
+            Share on: <a href="https://twitter.com/intent/tweet?text={{ item.title }}&amp;url={{ item.url }}&amp;hashtags=code,programming">Twitter</a> | <a href="https://www.facebook.com/sharer/sharer.php?u={{ item.url }}">Facebook</a> | <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url={{ item.url }}">LinkedIn</a> | <a href="https://www.reddit.com/submit?url={{ item.url }}">Reddit</a>
+        </div>
+        
+        <div style="text-align:left;padding-left:6%;padding-right:6%;">
+            <h3>Recent Posts:</h3>
+            {% for other_post in items %}
+                <a class="nice_link" href="{{ other_post.url }}">{{ other_post.title }}</a><br /><br />
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    {% if request.user_agent.is_pc %}
+        <script>
+            document.onkeydown = checkKey;
+    
+            function checkKey(e) {
+                e = e || window.event;
+                if (e.keyCode == '37') {
+                   window.location.href = "{{ latest.url }}";
+                }
+                else if (e.keyCode == '39') {
+                   window.location.href = "{{ random.url }}";
+                }
+            }
+        </script>
+    {% endif %}
+    
+    {% if scroll_to_bottom %}
+        <script>
+            window.scrollTo(0, document.body.scrollHeight-130);
+        </script>
+    {% endif %}
+{% endblock %} 

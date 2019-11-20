@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Create Forum Post" %}{% endblock %}
+
+{% block content %}
+    <b style="font-size:3rem;font-weight:normal;">Create Forum Post</b>
+    <hr />
+    <form method="POST" style="font-size:1.3rem;">
+        {% csrf_token %}
+        Question: <input name="question" type="text" placeholder="Why... ?" maxlength=200 required>
+        <br />
+        Language Used / Topic: <input name="language" type="text" placeholder="Programming Language" maxlength=100 required>
+        <br />
+        Description (This Field Uses <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet">Markdown</a>): 
+        <br>
+        <textarea name="body" cols="60" rows="20" placeholder="Throughly explain your question, what you've done and where you are stuck." required></textarea>
+        <br />
+        <button type="submit" style="background-color:white;width:7rem; height:2rem;">Post</button>
+    </form>
+    <h3>RULES</h3>
+    <ul>
+        <li>No Spam</li>
+        <li>Keep It Relevent</li>
+        <li>No Hate</li>
+    </ul>
+{% endblock %}  

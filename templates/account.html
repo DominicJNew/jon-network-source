@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}
+User {{ user_prof.username|capfirst }}
+{% endblock %}
+
+{% block extra_head %}
+<meta name="description" content="{{ user_prof.username }} - Rep: {{ user_prof.rep }} | Bio: {{ user_prof.bio }}">
+{% endblock %}
+        
+        
+{% block content %}
+    <br>
+    <div style="width:100%;height:20%;">
+        <h1 style="font-size:3rem;margin:0;">
+            {{ user_prof.username|capfirst }} 
+            {% if user.username == user_prof.username %}
+                <a href="/edit-profile/"><img src="/static/images/pencil.png" alt="pencil" style="width:3%;vertical-align:middle;"></a>
+            {% endif %}
+        </h1>
+        <img src="{{ user_prof.gravatar }}" alt="{{ user_prof.username }} avatar">
+    </div>
+    <br style="clear: both;">
+    <b>Rep: {{ user_prof.rep }}</b>
+    
+    <br style="clear: both;">
+
+    <div style="font-size:1.3rem;">
+        {% if user_prof.github %}
+            <a href="https://github.com/{{ user_prof.github }}" class="social_link nice_link">GitHub</a>
+        {% endif %}
+        {% if user_prof.twitter %}
+             | <a href="https://twitter.com/{{ user_prof.twitter }}" class="social_link nice_link">Twitter</a>
+        {% endif %}
+        {% if user_prof.facebook %}
+             | <a href="https://facebook.com/{{ user_prof.facebook }}" class="social_link nice_link">Facebook</a>
+        {% endif %}
+        {% if user_prof.instagram %}
+             | <a href="https://instagram.com/{{ user_prof.instagram }}" class="social_link nice_link">Instagram</a>
+        {% endif %}
+        {% if user_prof.personal %}
+            {% if 'https://' in user_prof.personal or 'http://' in user_prof.personal %}
+             | <a href="{{ user_prof.personal }}" class="social_link nice_link">{{ user_prof.username }}'s Website</a>
+            {% else %}
+             | <a href="http://{{ user_prof.personal }}" class="social_link nice_link">{{ user_prof.username }}'s Website</a>
+            {% endif %}
+        {% endif %}
+        </div>
+        <br />
+        {% if user_prof.bio %}
+        <hr />
+        {% if not request.user_agent.is_mobile %}
+            <p style="font-size:1.5rem;padding-left:30%;padding-right:30%;text-align:left;">
+                {{ user_prof.bio }}
+            </p>
+        {% else %}
+            <p style="font-size:1.5rem;padding-left:3%;padding-right:3%;text-align:left;">
+                {{ user_prof.bio }}
+            </p>
+        {% endif %}
+        
+        {% if user_prof.coin_address %}
+            <br>
+            <b>Donate {{ user_prof.coin_address_type }}: {{ user_prof.coin_address }}</b>
+        {% endif %}
+    {% endif %}
+{% endblock %}
+            
+    {% block extra_body %}
+            
+        {% if there_are_items %}
+            <hr />
+            <h1 style="font-family:'Montserrat', monospace;text-align:CENTER;">Posts:</h1>
+            <br />
+            
+            {% for index, item in items %}
+                {% if index|divisibleby:2 %} 
+                    {% if not request.user_agent.is_mobile %}
+                        <div style="border-style:solid;border-color:gray;border-radius:4%;width:20%;float:left;margin-left:28.5%;margin-right:1%;margin-bottom:2%;height:35%;font-family:'Montserrat', monospace;" class="box">
+                    {% else %}
+                        <div style="border-style:solid;border-color:gray;border-radius:4%;width:90%;float:left;margin-left:5%;margin-bottom:2%;height:35%;font-family:'Montserrat', monospace;" class="box">
+                    {% endif %}
+                {% else %}
+                    {% if not request.user_agent.is_mobile %}
+                        <div style="border-style:solid;border-color:gray;border-radius:4%;width:20%;float:left;margin-right:28.5%;margin-left:1%;margin-bottom:2%;height:35%;font-family:'Montserrat', monospace;" class="box">
+                    {% else %}
+                        <div style="border-style:solid;border-color:gray;border-radius:4%;width:90%;float:left;margin-left:5%;margin-bottom:2%;height:35%;font-family:'Montserrat', monospace;" class="box">
+                    {% endif %}
+                {% endif %}
+            
+                <div class="row header">
+                    <div style="width:100%;text-align:CENTER;margin:0;">
+                        <h2 style="text-align:CENTER;display:inline-block;margin:0;white-space: nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;"><a class="nice_link" href="{{ item.url }}" style="text-overflow:ellipsis;overflow:hidden;width:100%;">{{ item.title }}</a></h2>
+                    </div>
+                    {% if not user.is_authenticated or user.username not in item.voted %}
+                    <div style="width:100%;text-align:CENTER;margin:0;font-size:0.9rem;">
+                        <form method="POST" style="text-align:CENTER;display:inline-block;margin:0;">
+                            {% csrf_token %}
+                            {% if user.username not in item.voted and user.is_authenticated %}
+                            <button name="vote" class="text_button" value="u{{ item.title }}">
+                                Upvote
+                            </button>
+                            {% endif %}
+                        </form>
+                        {% if user.username not in item.voted and user.is_authenticated %}
+                        |
+                        {% endif %}
+                        <form method="POST" style="text-align:CENTER;display:inline-block;margin:0;">
+                            {% csrf_token %}
+                            {% if user.username not in item.voted and user.is_authenticated %}
+                            <button name="vote" class="text_button" value="d{{ item.title }}">
+                                Downvote
+                            </button>
+                            {% endif %}
+                        </form>
+                        {% if not user.is_authenticated %}
+                        Sign In to Vote
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    <div style="width:100%;text-align:CENTER;">
+                        <h5 style="display:inline-block;margin:0;overflow:hidden;width:25%;text-align:left;"> Votes: {{ item.votes }}</h5>
+                        <h5 style="display:inline-block;margin:0;text-overflow:ellipsis;overflow:hidden;width:73%;text-align:right;float:right;">Posted&nbsp;By:&nbsp;<a class="nice_link" href="https://jon.network/user/{{ item.author }}" style="">{{ item.author }}</a></h5>
+                    </div>
+                </div>
+                {% if not request.user_agent.is_mobile %}
+                    <p style="text-overflow:ellipsis;width:100%;overflow:hidden;margin:0;overflow-y:auto;" class="row content">{{ item.short_desc }}</p>
+                {% else %}
+                    <p style="text-overflow:ellipsis;width:100%;overflow:hidden;margin:0;overflow-y:auto;font-size:1.6rem;" class="row content">{{ item.short_desc }}</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

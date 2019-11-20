@@ -1,0 +1,98 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Create Post" %}{% endblock %}
+
+{% block extra_head %}
+<style>
+    #title {
+        border: none;
+        overflow: auto;
+        outline: none;
+    
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none;
+
+        font-family: 'Montserrat', monospace;
+        font-size: 2.3rem;
+    }
+    textarea {
+        border: 2px solid gray;
+        overflow: auto;
+        outline: none;
+    
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none;
+    
+        resize: vertical; /*remove the resize handle on the bottom right*/
+        font-family: 'Montserrat', monospace;
+    } .active-textarea {
+        border: 2px solid blue;
+    }
+    
+    #body {
+        font-size: 1.7rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+  <b style="font-size:3rem;font-weight:normal;">Create Post</b>
+  <br>
+  Please note, this version of markdown <strong>does not</strong> support tables.
+  <br />
+  <a href="/project/from-github/" style="background-color:yellow;">NEW FEATURE: Import from a GitHub README</a> or... <a href="/project/from-youtube/" style="background-color:yellow;">from YouTube!</a>
+  <hr />
+  <form method="POST" style="font-size:1.3rem;">
+    {% csrf_token %}
+    <input name="title" type="text" placeholder="Article Title... !" required id="title">
+    <br />
+    GitHub URL (Only If Available, Include 'https://'): <input name="link" type="url" placeholder="GitHub URL">
+    <br />
+    Topic: <input name="language" type="text" placeholder="Programming Language / Topic">
+    <br />
+    Description: <br /><textarea name="short_desc" id="short" cols="60" rows="10" placeholder="Add clickbait here..." required onclick="makeActive(this)"></textarea>
+    <br />
+    Body (This Field Uses <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet">Markdown</a>): 
+    <br /><textarea id="body" name="long_desc" cols="30" rows="25" placeholder="Write your EPIC story here... !" required onclick="makeActive(this)"></textarea>
+    <br />
+    <button type="submit" style="background-color:white;width:7rem; height:2rem;">Post!</button>
+  </form>
+  
+  <script>
+    var body = document.getElementById('body');
+    var short = document.getElementById('short');
+    var title = document.getElementById('title');
+    function parseURLParams(url) {
+        var queryStart = url.indexOf("?") + 1,
+            queryEnd   = url.indexOf("#") + 1 || url.length + 1,
+            query = url.slice(queryStart, queryEnd - 1),
+            pairs = query.replace(/\+/g, " ").split("&"),
+            parms = {}, i, n, v, nv;
+    
+        if (query === url || query === "") return;
+    
+        for (i = 0; i < pairs.length; i++) {
+            nv = pairs[i].split("=", 2);
+            n = decodeURIComponent(nv[0]);
+            v = decodeURIComponent(nv[1]);
+    
+            if (!parms.hasOwnProperty(n)) parms[n] = [];
+            parms[n].push(nv.length === 2 ? v : null);
+        }
+        return parms;
+    }
+    var params = parseURLParams(window.location.href);
+    body.value = params['body'];
+    
+    function makeActive(o) {
+        short.className = '';
+        body.className = '';
+        o.className = 'active-textarea';
+        console.log(o);
+    }
+  </script>
+{% endblock %}  
